@@ -1,0 +1,9 @@
+# Core dependencies for Looker Studio Automation
+# All other packages are transitive dependencies auto-installed by uv
+
+# Browser automation framework with agent capabilities
+browser-use
+# Google Gemini API for Vertex AI (used in ChatGoogle and VisionCoordinateFinder)
+google-genai
+# Environment variable management (.env file support)
+python-dotenv

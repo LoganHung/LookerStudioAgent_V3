@@ -1,0 +1,203 @@
+{
+  "chart_type_labels": {
+    "table": "Table",
+    "pivot_table": "Pivot table",
+    "scorecard": "Scorecard",
+    "time_series": "Time series chart",
+    "bar": "Bar chart",
+    "stacked_bar": "Stacked bar chart",
+    "100_stacked_bar": "100% stacked bar chart",
+    "column": "Column chart",
+    "stacked_column": "Stacked column chart",
+    "100_stacked_column": "100% stacked column chart",
+    "pie": "Pie chart",
+    "donut": "Donut chart",
+    "geo": "Geo chart",
+    "google_maps": "Google Maps",
+    "line": "Line chart",
+    "sparkline": "Sparkline",
+    "combo": "Combo chart",
+    "area": "Area chart",
+    "stacked_area": "Stacked area chart",
+    "100_stacked_area": "100% stacked area chart",
+    "scatter": "Scatter chart",
+    "bubble": "Bubble chart",
+    "bullet": "Bullet chart",
+    "treemap": "Treemap",
+    "gauge": "Gauge"
+  },
+
+  "chart_type_aliases": {
+    "bar chart": "Bar chart",
+    "bar": "Bar chart",
+    "column chart": "Column chart",
+    "column": "Column chart",
+    "horizontal bar": "Column chart",
+    "line chart": "Line chart",
+    "line": "Line chart",
+    "time series": "Time series chart",
+    "time series chart": "Time series chart",
+    "time_series": "Time series chart",
+    "pie chart": "Pie chart",
+    "pie": "Pie chart",
+    "donut chart": "Donut chart",
+    "donut": "Donut chart",
+    "scorecard": "Scorecard",
+    "kpi": "Scorecard",
+    "table": "Table",
+    "pivot table": "Pivot table",
+    "geo chart": "Geo chart",
+    "geo": "Geo chart",
+    "map": "Google Maps",
+    "google maps": "Google Maps",
+    "scatter chart": "Scatter chart",
+    "scatter": "Scatter chart",
+    "bubble chart": "Bubble chart",
+    "bubble": "Bubble chart",
+    "area chart": "Area chart",
+    "area": "Area chart",
+    "stacked bar": "Stacked bar chart",
+    "stacked bar chart": "Stacked bar chart",
+    "100% stacked bar": "100% stacked bar chart",
+    "stacked column": "Stacked column chart",
+    "stacked area": "Stacked area chart",
+    "combo chart": "Combo chart",
+    "combo": "Combo chart",
+    "sparkline": "Sparkline",
+    "bullet chart": "Bullet chart",
+    "bullet": "Bullet chart",
+    "treemap": "Treemap",
+    "gauge": "Gauge"
+  },
+
+  "procedures": {
+    "create_blank_report": {
+      "steps": [
+        "Navigate to https://lookerstudio.google.com/navigation/reporting and click 'Blank Report'"
+      ]
+    },
+    "connect_bigquery": {
+      "params": ["project_id", "dataset", "table"],
+      "steps": [
+        "In 'Add data to report', click BigQuery > project '{project_id}' > dataset '{dataset}' > table '{table}' > click 'Add' > confirm 'Add to report' if prompted"
+      ]
+    },
+    "add_and_place_chart": {
+      "params": ["chart_type", "position_description"],
+      "steps": [
+        "Click 'Add a chart' in toolbar > select '{chart_type}' > then vision_click(description=\"{position_description}\")"
+      ]
+    },
+    "set_dimension": {
+      "params": ["dimension_name"],
+      "steps": [
+        "In Setup tab, click the Dimension field > search '{dimension_name}' > select it"
+      ]
+    },
+    "add_dimension": {
+      "params": ["dimension_name"],
+      "steps": [
+        "Click 'Add a dimension' > search '{dimension_name}' > select it"
+      ]
+    },
+    "set_metric": {
+      "params": ["metric_name"],
+      "steps": [
+        "Click the Metric field > search '{metric_name}' > select it"
+      ]
+    },
+    "add_metric": {
+      "params": ["metric_name"],
+      "steps": [
+        "Click 'Add a metric' > search '{metric_name}' > select it"
+      ]
+    },
+    "style_set_title": {
+      "params": ["title_text"],
+      "steps": [
+        "Enable the 'Show title' toggle at the top of the Style tab, then click the title text input field directly below it, use Ctrl+A to select all, then type '{title_text}'"
+      ]
+    },
+    "style_set_color": {
+      "params": ["color_value"],
+      "steps": [
+        "Click the color swatch for Series 1 > click 'Add custom color' (+) button > in the hex input field use Ctrl+A then type '{color_value}' > click 'Done' or press Enter"
+      ]
+    },
+    "style_set_font_size": {
+      "params": ["font_size"],
+      "steps": [
+        "Click the 'Font size' dropdown > select '{font_size}' from the list (do not type into the field)"
+      ]
+    },
+    "style_toggle_x_axis_title": {
+      "steps": [
+        "Scroll the Style panel to find X-Axis section, then enable the 'Show axis title' toggle"
+      ]
+    },
+    "style_toggle_y_axis_title": {
+      "steps": [
+        "Scroll the Style panel to find Left Y-Axis section, then enable the 'Show axis title' toggle"
+      ]
+    },
+    "style_toggle_shadow": {
+      "steps": [
+        "Use find_text to search 'Add border shadow' in the Style panel, then click its checkbox to enable"
+      ]
+    },
+    "style_set_legend_position": {
+      "params": ["position"],
+      "steps": [
+        "Use find_text to search 'Legend' in the Style panel, click the Legend dropdown to open it, then select '{position}'"
+      ]
+    },
+    "style_toggle_data_labels": {
+      "steps": [
+        "Use find_text to search 'Show data labels' in the Style panel, then click its checkbox to enable"
+      ]
+    },
+    "style_toggle_compact_numbers": {
+      "steps": [
+        "Click on the Metric field in the Setup tab to open it, then click the pencil/edit icon, find 'Compact Numbers' toggle in the metric editor, and enable it"
+      ]
+    },
+    "style_set_background_color": {
+      "params": ["color_value"],
+      "steps": [
+        "Use find_text to search 'Background' in the Style panel, click the background color swatch > click 'Add custom color' (+) > use Ctrl+A then type '{color_value}' in the hex field > click 'Done' or press Enter"
+      ]
+    },
+
+    "set_chart_size": {
+      "params": ["width", "height"],
+      "steps": [
+        "With the chart selected, find the size controls in the right property panel (width and height input fields), set width to '{width}' and height to '{height}' by clicking each field, using Ctrl+A to select all, then typing the value"
+      ]
+    },
+    "set_sort": {
+      "params": ["sort_field", "sort_order"],
+      "steps": [
+        "In the Setup tab, click the 'Sort' field > search '{sort_field}' > select it, then click the sort-order toggle to set it to '{sort_order}'"
+      ]
+    },
+    "set_row_limit": {
+      "params": ["row_limit"],
+      "steps": [
+        "In the Setup tab, click the 'Rows per page' or 'Default number of rows' field, use Ctrl+A to select all, then type '{row_limit}'"
+      ]
+    },
+    "add_text_element": {
+      "params": ["position_description", "text_content"],
+      "steps": [
+        "Click 'Add a chart' in toolbar > select 'Text' > then vision_click(description=\"{position_description}\")",
+        "Double-click the text box to enter edit mode, use Ctrl+A to select all, then type '{text_content}'"
+      ]
+    },
+    "add_date_range_control": {
+      "params": ["position_description"],
+      "steps": [
+        "Click 'Add a control' in toolbar > select 'Date range control' > then vision_click(description=\"{position_description}\")"
+      ]
+    }
+  }
+}
