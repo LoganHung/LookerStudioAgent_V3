@@ -65,13 +65,14 @@ If user asks what tables exist → run `bq ls {project}:{dataset}`.
   | "show data" / "performance" | Too vague | Which aspect — totals, trends, comparisons? |
 
   2. Collect `chart_type`, title, metrics, dimensions, special_configurations from user. Append to `visualizations` array and Write after each.
+  
   **Rule of special_configurations**
-    - Consolidate user's requirements to chart's configuration before write to `special_configurations`
-    - color >> hex code
-    - enable label, effect, or title >> True or False
-    - label position >> direction
-    - font size >> number
-    - Others >> Infer user intent and ask again
+  - Consolidate user's requirements to chart's configuration before write to `special_configurations`
+  - color >> hex code
+  - enable label, effect, or title >> True or False
+  - label position >> direction
+  - font size >> number
+  - Others >> Infer user intent and ask again
 
 ### Step 3: Confirm Visualizations
 Present summary. If rejected, ask what to change (data source / specific chart / add more) and loop back.
