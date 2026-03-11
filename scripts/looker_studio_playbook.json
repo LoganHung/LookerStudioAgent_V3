@@ -198,6 +198,12 @@
       "steps": [
         "Click 'Add a control' in toolbar > select 'Date range control' > then vision_click(description=\"{position_description}\")"
       ]
+    },
+    "others":{
+      "params":["others"],
+      "steps":[
+        "In the Style Panel on the right side, set {others}"
+      ]
     }
   }
 }
