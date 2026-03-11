@@ -1,13 +1,11 @@
 ---
 name: looker-studio-automation
-description: Automates the design and creation of Looker Studio dashboards. Use this when the user wants to build a Looker Studio dashboard interactively, OR when the user provides a pre-configured JSON file and wants it executed directly without questioning.
+description: Automates the design and creation of Looker Studio dashboards. Use this when the user wants to build a Looker Studio dashboard.
 ---
-
-# Looker Studio Automation
 
 ## Core Rules
 - Ask ONE question at a time. Never hallucinate Project IDs, metrics, or dimensions.
-- Interactive mode config file: `./.looker-automation/dashboard_config.json`. CLI mode: use the absolute path provided by the user.
+- Interactive mode config file: `./.looker-automation/dashboard_config.json`.
 - Always Read config file before Write (preserve existing data).
 - **Never write raw user words into config.** All values must be translated first.
 
@@ -28,7 +26,7 @@ description: Automates the design and creation of Looker Studio dashboards. Use 
 
 ### Step 1: Init & Data Source
 
-**If the user's message contains a `.json` file path: extract it, resolve to absolute path (`realpath`), then execute `scripts/run.sh --config /absolute/path/to/dashboard_config.json` — if invalid, report the errors and ask the user to fix them.**
+**If the user's message contains a `.json` file path: extract it, resolve to absolute path (`realpath`), skip to step 5 then execute — if invalid, report the errors and ask the user to fix them.**
 
 1. Run `scripts/config_helper.sh init`. If return EXISTS, run `scripts/config_helper.sh status` and resume from the indicated step.
 2. If `RESUME_FROM=complete`: offer "Execute now" or "Start fresh".
@@ -102,4 +100,3 @@ Use`run.sh` validates the config automatically as its first step. If invalid, ru
 **If execution fails:**
 - "ADC missing" / "authentication" → guide user to run `gcloud auth application-default login`
 - "table not found" → verify BigQuery resource names
-- "vision_click failed" → refine layout instructions (Step 4)

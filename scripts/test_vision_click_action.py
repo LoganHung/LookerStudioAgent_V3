@@ -346,8 +346,8 @@ async def main():
 
     SYSTEM_PROMPT = """
     Task Rules:
-    - When you see "vision_click", use the vision_click action with the exact description.
     - Forbidden to use vision_click if not mention in the task.
+    - Do Not Trigger vision_click to find element, button, icon, and etc,.
     - Do NOT use multi-action for dropdown menus or field pickers. Wait for each to render.
     - Do not scroll the canvas when configuring Style tab.
     Speed optimization instructions:    
