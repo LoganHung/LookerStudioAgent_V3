@@ -11,15 +11,6 @@ description: Automates the design and creation of Looker Studio dashboards. Use 
 - Always Read config file before Write (preserve existing data).
 - **Never write raw user words into config.** All values must be translated first.
 
-## HelperScript
-```bash
-SCRIPT_DIR=".claude/skills/looker-studio-automation/scripts"
-bash "$SCRIPT_DIR/config_helper.sh" init      # Creates dir + empty config
-bash "$SCRIPT_DIR/config_helper.sh" status    # Outputs RESUME_FROM=step1|step2|step4|complete
-bash "$SCRIPT_DIR/config_helper.sh" validate  # Outputs VALID or MISSING: field field2 (presence-only check)
-# Note: full validation (formats, enums, counts) runs automatically inside run.sh via validate_config.py
-```
-
 ## JSON Schema
 ```json
 {
@@ -37,9 +28,9 @@ bash "$SCRIPT_DIR/config_helper.sh" validate  # Outputs VALID or MISSING: field 
 
 ### Step 1: Init & Data Source
 
-**If the user's message contains a `.json` file path: extract it, resolve to absolute path (`realpath`), then skip to Step 5 and execute. `run.sh` validates automatically — if invalid, report the errors and ask the user to fix them.**
+**If the user's message contains a `.json` file path: extract it, resolve to absolute path (`realpath`), then execute `scripts/run.sh --config /absolute/path/to/dashboard_config.json` — if invalid, report the errors and ask the user to fix them.**
 
-1. Run `config_helper.sh init`. If EXISTS, run `config_helper.sh status` and resume from the indicated step.
+1. Run `scripts/config_helper.sh init`. If return EXISTS, run `scripts/config_helper.sh status` and resume from the indicated step.
 2. If `RESUME_FROM=complete`: offer "Execute now" or "Start fresh".
 3. Ask for Vertex AI Project ID, then BigQuery Project ID / Dataset / Table. Write to config.
 
@@ -61,7 +52,7 @@ bash "$SCRIPT_DIR/config_helper.sh" validate  # Outputs VALID or MISSING: field 
 2. Collect `chart_type`, title, metrics, dimensions, special_configurations from user. Append to `visualizations` array and Write after each.
 
    **special_configurations rules**
-   Consolidate user's requirements to chart's configuration and get confirmation before write to `special_configurations`.
+  - Consolidate user's requirements to chart's configuration and get confirmation before write to `special_configurations`.
 
    | User says | Translate to |
    |-----------|-------------|
@@ -106,7 +97,7 @@ Present complete plan. If rejected, route to relevant step. If approved, execute
 ```bash
 bash .claude/skills/looker-studio-automation/scripts/run.sh --config /absolute/path/to/dashboard_config.json
 ```
-`run.sh` validates the config automatically as its first step. If invalid, report the errors and loop back to the relevant step.
+Use`run.sh` validates the config automatically as its first step. If invalid, run `scripts/config_helper.sh validate` and report the errors and loop back to the relevant step.
 
 **If execution fails:**
 - "ADC missing" / "authentication" → guide user to run `gcloud auth application-default login`
