@@ -7,9 +7,8 @@ description: Automates the design and creation of Looker Studio dashboards. Use 
 
 ## Core Rules
 - Ask ONE question at a time. Never hallucinate Project IDs, metrics, or dimensions.
-- Single config file: `./.looker-automation/dashboard_config.json` (no variants).
-- Always Read before Write (preserve existing data).
-- Be a dashboard designer, not a form. Infer intent, suggest patterns, confirm understanding.
+- Interactive mode config file: `./.looker-automation/dashboard_config.json`. CLI mode: use the absolute path provided by the user.
+- Always Read config file before Write (preserve existing data).
 - **Never write raw user words into config.** All values must be translated first.
 - `chart_color` must always be a hex code (e.g. `"#FF6D00"`), never a color name.
 - `layout_instructions` must always be exact vision_click position descriptions, never words like "side by side".
@@ -39,13 +38,10 @@ bash "$SCRIPT_DIR/config_helper.sh" validate          # Outputs VALID or MISSING
 ## Workflow
 
 ### Step 1: Init & Data Source
-**If the user provides a JSON config file or block: skip to Step 5 and execute. `run.sh` validates automatically — if invalid, report the errors and ask the user to fix them.**
+**If the user's message contains a `.json` file path: extract it, resolve to absolute path (`realpath`), then skip to Step 5 and execute. `run.sh` validates automatically — if invalid, report the errors and ask the user to fix them.**
 1. Run `config_helper.sh init`. If EXISTS, run `config_helper.sh status` and resume from the indicated step.
 2. If `RESUME_FROM=complete`: offer "Execute now" or "Start fresh".
 3. Ask for Vertex AI Project ID, then BigQuery Project ID / Dataset / Table. Write to config.
-
-<!-- add this feature or not -->
-If user asks what tables exist → run `bq ls {project}:{dataset}`.
 
 ### Step 2: Visualizations
 
@@ -58,7 +54,6 @@ If user asks what tables exist → run `bq ls {project}:{dataset}`.
   |-----------|-------|----------|
   | "trends / over time" | Line chart, time dimension | Granularity (daily/monthly/quarterly)? |
   | "compare / breakdown by" | Bar chart | What to compare? |
-  | "top N / best / worst" | Ranking chart | Which metric? |
   | "total / overall" | Scorecard | — |
   | "by region / country" | Geo chart | — |
   | "same thing but for X" | Reuse previous metric, change dimension | — |
@@ -66,44 +61,40 @@ If user asks what tables exist → run `bq ls {project}:{dataset}`.
 
   2. Collect `chart_type`, title, metrics, dimensions, special_configurations from user. Append to `visualizations` array and Write after each.
   
-  **Rule of special_configurations**
-  - Consolidate user's requirements to chart's configuration before write to `special_configurations`
-  - color >> hex code
-  - enable label, effect, or title >> True or False
-  - label position >> direction
-  - font size >> number
-  - Others >> Infer user intent and ask again
+  **special_configurations rules**
+  - Consolidate user's requirements to chart's configuration and get confirmation before write to `special_configurations`
+  | User says | Traslate to |
+  |-----------|-------|
+  | "color" | hex code|
+  | "enable label, effect, or title" | True or False |
+  | "label position" | direction |
+  | "font size" | number |
+  | "others" | Infer user intent and ask again |
 
 ### Step 3: Confirm Visualizations
 Present summary. If rejected, ask what to change (data source / specific chart / add more) and loop back.
 
 ### Step 4: Layout
-Ask for layout in natural language. **Always clarify ambiguous layout words before translating.** Transform into `vision_click` position descriptions for `layout_instructions` array.
+Collect the relative position of each chart's 
+1. Ask User: 
+  1. `where to put the chart`
+  - A `anchor point` - white canvas, chart, label, etc. 
+  - A `position` - Position(must be a direction) - top, top-left, bottom, bottom-right, etc.
+  2. `gap with anchor chart`
+  - Have a gap with the `anchor point` or not
+  
+2. Construct Answer to a sentence
+- start off with the words : "Flush to the `position`"
+  - If gap is needed, add `with 10px gap`
+- then refer the `anchor point`, if `anchor point` is a label or a chart, add `outer boudart box` in the suffix
+**Example**
 
-**Clarify first:**
+| Anchor point | Gap | Position | Construct to |
+|-------|-------|-------|---------|
+| "white canvas" | No | top left | Flush to the top-left of the white canvas |
+| "bar chart at the top-left" | Yes | bottom right | Flush to the bottom-right of the top-left chart with 10px gap|
 
-| User says | Ask |
-|-----------|-----|
-| "side by side" / "next to each other" | "Left-right or top-bottom?" |
-| "together" | "In a row, column, or grid?" |
-| "spread out" / "organized" | "How many columns?" |
-
-Compiler-resolved keywords: `right`, `below`, `below-left`, `below-right`. Anything else → clarify first.
-
-**Then translate:**
-1. User gives layout description
-2. If any ambiguity → ask ONE clarifying question (above)
-3. User confirms → translate to vision_click descriptions
-4. Show the translated descriptions → ask "Does this look right?"
-5. User confirms → write to config
-
-**Transformation rules:**
-- Each entry describes a **position**, not an action — never start with a verb
-- One entry per chart, in the same order as `visualizations`
-- Always refer to other chart's outer boundary box, and ask for position's clarification
-  - **ASK** which chart to refer to? e.g. The first one? The bar chart?  
-  - Right of previous → `"flush to the top and right of the {viz chart} outer boundary box"`
-  - Below previous → `"flush to the bottom of the {viz chart} outer boundary box"`
+3. One entry per chart, in the same order as `visualizations`, record the construction to `layout_instructions`
 
 ### Step 5: Final Confirmation & Execute
 Present complete plan. If rejected, route to relevant step.
