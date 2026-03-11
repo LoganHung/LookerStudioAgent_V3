@@ -232,7 +232,7 @@ def compile_config(config_path: str, playbook_path: str = None) -> dict:
         if sc.get("background_color"):
             style_parts.extend(expand_procedure("style_set_background_color", playbook, {"color_value": sc["background_color"]}))
         if sc.get("other"):
-            style_parts.append(sc["other"])
+            style_parts.extend(expand_procedure("others", playbook, {"others": sc["others"]}))
 
         if style_parts:
             add("Switch to 'Style' tab")

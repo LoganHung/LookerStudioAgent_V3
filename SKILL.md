@@ -27,7 +27,7 @@ bash "$SCRIPT_DIR/config_helper.sh" validate  # Outputs VALID or MISSING: field 
   "data_source": { "project_id": "", "dataset": "", "table_name": "" },
   "visualizations": [
     { "chart_type": "", "metrics": [], "dimensions": [], "title": "",
-      "special_configurations": { "font_size": "", "chart_color": "", "background_color": "", "show_x_axis_title": false, "show_y_axis_title": false, "add_shadow": false, "legend_position": "", "show_data_labels": false, "compact_numbers": false, "other": "" } }
+      "special_configurations": { "font_size": "", "chart_color": "", "background_color": "", "show_x_axis_title": false, "show_y_axis_title": false, "add_shadow": false, "legend_position": "", "show_data_labels": false, "compact_numbers": false, "others": "" } }
   ],
   "layout_instructions": []
 }
