@@ -95,7 +95,7 @@ Present complete plan. If rejected, route to relevant step. If approved, execute
 ```bash
 bash .claude/skills/looker-studio-automation/scripts/run.sh --config /absolute/path/to/dashboard_config.json
 ```
-Use`run.sh` validates the config automatically as its first step. If invalid, run `scripts/config_helper.sh validate` and report the errors and loop back to the relevant step.
+Use`run.sh` validates the config automatically as its first step. If error, run `scripts/config_helper.sh validate` and report the errors and loop back to the relevant step.
 
 **If execution fails:**
 - "ADC missing" / "authentication" → guide user to run `gcloud auth application-default login`
