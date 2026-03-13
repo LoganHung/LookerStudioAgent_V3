@@ -24,11 +24,36 @@ import sys
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 
+# Non-data element types (no metrics/dimensions needed)
+NON_DATA_TYPES = {"text", "text_box", "date_range_control", "date_range", "date_control"}
+
+# Interactive control types (use control_field instead of metrics/dimensions)
+CONTROL_TYPES = {
+    "dropdown_list", "drop_down", "dropdown", "drop-down list",
+    "fixed_size_list", "fixed-size list", "fixed size list",
+    "checkbox", "checkbox_control", "checkbox control",
+}
+
 # Chart types that do not require at least one dimension
-DIMENSION_OPTIONAL_TYPES = {"scorecard", "kpi"}
+DIMENSION_OPTIONAL_TYPES = {"scorecard", "kpi"} | NON_DATA_TYPES | CONTROL_TYPES
+
+# Chart types that do not require at least one metric
+METRIC_OPTIONAL_TYPES = NON_DATA_TYPES | CONTROL_TYPES
 
 # Valid legend_position values (Looker Studio supported values per WORKFLOW.md)
 VALID_LEGEND_POSITIONS = {"top", "down", "right", "left"}
+
+# Valid filter conditions for chart-level filters
+VALID_FILTER_CONDITIONS = {
+    "equals", "not_equals", "contains", "not_contains",
+    "starts_with", "ends_with", "in", "not_in",
+    "greater_than", "greater_than_or_equal",
+    "less_than", "less_than_or_equal",
+    "is_null", "is_not_null", "regex",
+}
+
+# Valid metric aggregation types
+VALID_AGGREGATIONS = {"sum", "avg", "count", "count_distinct", "min", "max", "none", "auto"}
 
 # All recognized chart type keys and aliases (mirrors looker_studio_playbook.json)
 KNOWN_CHART_TYPES = {
@@ -47,6 +72,11 @@ KNOWN_CHART_TYPES = {
     "stacked bar", "stacked bar chart", "100% stacked bar", "stacked column",
     "stacked column chart", "stacked area", "stacked area chart",
     "combo chart", "bullet chart", "horizontal bar",
+    "waterfall", "waterfall chart",
+    # filter controls
+    "dropdown_list", "drop_down", "dropdown", "drop-down list",
+    "fixed_size_list", "fixed-size list", "fixed size list",
+    "checkbox", "checkbox_control", "checkbox control",
 }
 
 HEX_RE = re.compile(r"^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$")
@@ -116,31 +146,76 @@ def validate(config_path: str) -> list[str]:
                     f"{pfx}.chart_type: '{ct_raw}' is not a recognized chart type"
                 )
 
-            # metrics
-            metrics = viz.get("metrics")
-            if not isinstance(metrics, list):
-                errors.append(f"{pfx}.metrics: required and must be an array")
-            elif len(metrics) == 0:
-                errors.append(f"{pfx}.metrics: must contain at least one metric")
-            else:
-                for m_idx, m in enumerate(metrics):
-                    if not is_nonempty_string(m):
-                        errors.append(f"{pfx}.metrics[{m_idx}]: must be a non-empty string")
+            ct_lower = ct_raw.strip().lower()
 
-            # dimensions
+            # metrics (optional for controls and non-data types)
+            metrics = viz.get("metrics")
+            if ct_lower not in METRIC_OPTIONAL_TYPES:
+                if not isinstance(metrics, list):
+                    errors.append(f"{pfx}.metrics: required and must be an array")
+                elif len(metrics) == 0:
+                    errors.append(f"{pfx}.metrics: must contain at least one metric")
+                else:
+                    for m_idx, m in enumerate(metrics):
+                        if not is_nonempty_string(m):
+                            errors.append(f"{pfx}.metrics[{m_idx}]: must be a non-empty string")
+
+            # dimensions (optional for scorecards, controls, and non-data types)
             dims = viz.get("dimensions")
-            if not isinstance(dims, list):
-                errors.append(f"{pfx}.dimensions: required and must be an array")
-            elif len(dims) == 0:
-                if ct_raw.strip().lower() not in DIMENSION_OPTIONAL_TYPES:
+            if ct_lower not in DIMENSION_OPTIONAL_TYPES:
+                if not isinstance(dims, list):
+                    errors.append(f"{pfx}.dimensions: required and must be an array")
+                elif len(dims) == 0:
                     errors.append(
                         f"{pfx}.dimensions: must contain at least one dimension "
                         f"(use chart_type 'scorecard' or 'kpi' if dimensions are intentionally empty)"
                     )
-            else:
-                for d_idx, d in enumerate(dims):
-                    if not is_nonempty_string(d):
-                        errors.append(f"{pfx}.dimensions[{d_idx}]: must be a non-empty string")
+                else:
+                    for d_idx, d in enumerate(dims):
+                        if not is_nonempty_string(d):
+                            errors.append(f"{pfx}.dimensions[{d_idx}]: must be a non-empty string")
+
+            # control_field (required for control types)
+            if ct_lower in CONTROL_TYPES:
+                control_field = viz.get("control_field", "")
+                if not is_nonempty_string(control_field):
+                    errors.append(f"{pfx}.control_field: required for control type '{ct_raw}'")
+
+            # filters (optional; validate if present)
+            filters = viz.get("filters")
+            if filters is not None:
+                if not isinstance(filters, list):
+                    errors.append(f"{pfx}.filters: must be an array")
+                else:
+                    for f_idx, filt in enumerate(filters):
+                        fpfx = f"{pfx}.filters[{f_idx}]"
+                        if not isinstance(filt, dict):
+                            errors.append(f"{fpfx}: must be a JSON object")
+                            continue
+                        ft = filt.get("type", "")
+                        if not is_nonempty_string(ft) or ft.strip().lower() not in ("include", "exclude"):
+                            errors.append(f"{fpfx}.type: must be 'include' or 'exclude'")
+                        if not is_nonempty_string(filt.get("field", "")):
+                            errors.append(f"{fpfx}.field: required and must be non-empty")
+                        cond = filt.get("condition", "")
+                        if not is_nonempty_string(cond) or cond.strip().lower() not in VALID_FILTER_CONDITIONS:
+                            errors.append(f"{fpfx}.condition: must be one of {sorted(VALID_FILTER_CONDITIONS)}")
+                        if cond and cond.strip().lower() not in ("is_null", "is_not_null"):
+                            if not is_nonempty_string(str(filt.get("value", ""))):
+                                errors.append(f"{fpfx}.value: required for condition '{cond}'")
+
+            # metric_aggregations (optional; validate if present)
+            metric_aggs = viz.get("metric_aggregations")
+            if metric_aggs is not None:
+                if not isinstance(metric_aggs, dict):
+                    errors.append(f"{pfx}.metric_aggregations: must be a JSON object")
+                else:
+                    for field_name, agg_type in metric_aggs.items():
+                        if not is_nonempty_string(str(agg_type)) or str(agg_type).strip().lower() not in VALID_AGGREGATIONS:
+                            errors.append(
+                                f"{pfx}.metric_aggregations.{field_name}: "
+                                f"'{agg_type}' must be one of {sorted(VALID_AGGREGATIONS)}"
+                            )
 
             # special_configurations (optional; validate contents if present)
             sc = viz.get("special_configurations")

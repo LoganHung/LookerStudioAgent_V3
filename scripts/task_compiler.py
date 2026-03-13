@@ -153,6 +153,46 @@ def compile_config(config_path: str, playbook_path: str = None) -> dict:
                 add_procedure("set_chart_size", {"width": str(width), "height": str(height)})
             continue
 
+        # === Filter controls ===
+        if chart_type_raw.lower() in ("dropdown_list", "drop_down", "dropdown", "drop-down list"):
+            add("Scroll canvas to top")
+            control_field = viz.get("control_field", "") or (viz.get("dimensions", []) or [""])[0]
+            add_procedure("add_dropdown_control", {
+                "position_description": layout_desc,
+                "control_field": control_field,
+            })
+            width = viz.get("width")
+            height = viz.get("height")
+            if width and height:
+                add_procedure("set_chart_size", {"width": str(width), "height": str(height)})
+            continue
+
+        if chart_type_raw.lower() in ("fixed_size_list", "fixed-size list", "fixed size list"):
+            add("Scroll canvas to top")
+            control_field = viz.get("control_field", "") or (viz.get("dimensions", []) or [""])[0]
+            add_procedure("add_fixed_size_list_control", {
+                "position_description": layout_desc,
+                "control_field": control_field,
+            })
+            width = viz.get("width")
+            height = viz.get("height")
+            if width and height:
+                add_procedure("set_chart_size", {"width": str(width), "height": str(height)})
+            continue
+
+        if chart_type_raw.lower() in ("checkbox", "checkbox_control", "checkbox control"):
+            add("Scroll canvas to top")
+            control_field = viz.get("control_field", "") or (viz.get("dimensions", []) or [""])[0]
+            add_procedure("add_checkbox_control", {
+                "position_description": layout_desc,
+                "control_field": control_field,
+            })
+            width = viz.get("width")
+            height = viz.get("height")
+            if width and height:
+                add_procedure("set_chart_size", {"width": str(width), "height": str(height)})
+            continue
+
         # === Standard chart types ===
         if not chart_type_raw:
             title_lower = viz.get("title", "").lower()
@@ -203,10 +243,31 @@ def compile_config(config_path: str, playbook_path: str = None) -> dict:
         if row_limit:
             add_procedure("set_row_limit", {"row_limit": str(row_limit)})
 
+        # Metric aggregations (override default aggregation per metric)
+        metric_aggs = viz.get("metric_aggregations", {})
+        for met_name, agg_type in metric_aggs.items():
+            add_procedure("set_metric_aggregation", {
+                "metric_name": met_name,
+                "aggregation_type": agg_type,
+            })
+
+        # Chart-level filters (include/exclude)
+        filters = viz.get("filters", [])
+        for filt in filters:
+            add_procedure("add_chart_filter", {
+                "filter_type": filt.get("type", "include").capitalize(),
+                "field_name": filt.get("field", ""),
+                "condition": filt.get("condition", "equals"),
+                "value": str(filt.get("value", "")),
+            })
+
         # Setup-level configurations (before switching to Style tab)
         sc = viz.get("special_configurations", {})
         if sc.get("compact_numbers"):
             for s in expand_procedure("style_toggle_compact_numbers", playbook):
+                add(s)
+        if sc.get("cross_filtering"):
+            for s in expand_procedure("toggle_cross_filtering", playbook):
                 add(s)
 
         # Style tab configurations

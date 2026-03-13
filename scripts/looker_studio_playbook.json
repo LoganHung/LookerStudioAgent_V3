@@ -24,7 +24,11 @@
     "bubble": "Bubble chart",
     "bullet": "Bullet chart",
     "treemap": "Treemap",
-    "gauge": "Gauge"
+    "gauge": "Gauge",
+    "waterfall": "Waterfall chart",
+    "dropdown_list": "Drop-down list",
+    "fixed_size_list": "Fixed-size list",
+    "checkbox": "Checkbox"
   },
 
   "chart_type_aliases": {
@@ -67,7 +71,21 @@
     "bullet chart": "Bullet chart",
     "bullet": "Bullet chart",
     "treemap": "Treemap",
-    "gauge": "Gauge"
+    "gauge": "Gauge",
+    "waterfall": "Waterfall chart",
+    "waterfall chart": "Waterfall chart",
+    "dropdown": "Drop-down list",
+    "dropdown list": "Drop-down list",
+    "drop-down": "Drop-down list",
+    "drop-down list": "Drop-down list",
+    "drop_down": "Drop-down list",
+    "dropdown_list": "Drop-down list",
+    "fixed-size list": "Fixed-size list",
+    "fixed size list": "Fixed-size list",
+    "fixed_size_list": "Fixed-size list",
+    "checkbox": "Checkbox",
+    "checkbox control": "Checkbox",
+    "checkbox_control": "Checkbox"
   },
 
   "procedures": {
@@ -203,6 +221,45 @@
       "params":["others"],
       "steps":[
         "In the Style Panel on the right side, set {others}"
+      ]
+    },
+
+    "add_chart_filter": {
+      "params": ["filter_type", "field_name", "condition", "value"],
+      "steps": [
+        "In the Setup tab, click 'ADD A FILTER' > click 'CREATE A FILTER' > select '{filter_type}' > choose field '{field_name}' > set condition to '{condition}' > enter value '{value}' > click 'Save'"
+      ]
+    },
+    "add_dropdown_control": {
+      "params": ["position_description", "control_field"],
+      "steps": [
+        "Click 'Add a control' in toolbar > select 'Drop-down list' > then vision_click(description=\"{position_description}\")",
+        "In the Setup tab, click the Control field > search '{control_field}' > select it"
+      ]
+    },
+    "add_fixed_size_list_control": {
+      "params": ["position_description", "control_field"],
+      "steps": [
+        "Click 'Add a control' in toolbar > select 'Fixed-size list' > then vision_click(description=\"{position_description}\")",
+        "In the Setup tab, click the Control field > search '{control_field}' > select it"
+      ]
+    },
+    "add_checkbox_control": {
+      "params": ["position_description", "control_field"],
+      "steps": [
+        "Click 'Add a control' in toolbar > select 'Checkbox' > then vision_click(description=\"{position_description}\")",
+        "In the Setup tab, click the Control field > search '{control_field}' > select it"
+      ]
+    },
+    "set_metric_aggregation": {
+      "params": ["metric_name", "aggregation_type"],
+      "steps": [
+        "Click on the metric '{metric_name}' in the Setup tab to open it, click the pencil/edit icon, find the 'Aggregation' dropdown, and change it to '{aggregation_type}'"
+      ]
+    },
+    "toggle_cross_filtering": {
+      "steps": [
+        "In the Setup tab, scroll down to find 'Cross-filtering' toggle and click it to enable"
       ]
     }
   }
