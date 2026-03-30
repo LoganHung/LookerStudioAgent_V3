@@ -30,7 +30,6 @@
     "fixed_size_list": "Fixed-size list",
     "checkbox": "Checkbox"
   },
-
   "chart_type_aliases": {
     "bar chart": "Bar chart",
     "bar": "Bar chart",
@@ -72,8 +71,8 @@
     "bullet": "Bullet chart",
     "treemap": "Treemap",
     "gauge": "Gauge",
-    "waterfall": "Waterfall chart",
     "waterfall chart": "Waterfall chart",
+    "waterfall": "Waterfall chart",
     "dropdown": "Drop-down list",
     "dropdown list": "Drop-down list",
     "drop-down": "Drop-down list",
@@ -87,179 +86,284 @@
     "checkbox control": "Checkbox",
     "checkbox_control": "Checkbox"
   },
-
   "procedures": {
     "create_blank_report": {
       "steps": [
-        "Navigate to https://lookerstudio.google.com/navigation/reporting and click 'Blank Report'"
+        "Navigate to https://lookerstudio.google.com/navigation/reporting and create a new blank report"
       ]
     },
     "connect_bigquery": {
-      "params": ["project_id", "dataset", "table"],
+      "params": [
+        "project_id",
+        "dataset",
+        "table"
+      ],
       "steps": [
-        "In 'Add data to report', click BigQuery > project '{project_id}' > dataset '{dataset}' > table '{table}' > click 'Add' > confirm 'Add to report' if prompted"
+        "'Add data to report' > BigQuery > project '{project_id}' > dataset '{dataset}' > table '{table}' > Add > confirm"
       ]
     },
-    "add_and_place_chart": {
-      "params": ["chart_type", "position_description"],
+    "enable_responsive_layout": {
       "steps": [
-        "Click 'Add a chart' in toolbar > select '{chart_type}' > then vision_click(description=\"{position_description}\")"
+        "Enable Responsive Layout"
+      ]
+    },
+    "add_first_chart_to_section": {
+      "params": [
+        "chart_type"
+      ],
+      "steps": [
+        "Take a screenshot (no filename) to get visual context. Click the 'Add chart in placeholder' button (class placeholder-add-chart-button) in the center of the empty section, then select '{chart_type}' from the chart picker."
+      ]
+    },
+    "add_another_chart_to_section": {
+      "params": [
+        "chart_type"
+      ],
+      "steps": [
+        "Take a screenshot (no filename) to get visual context. Use evaluate() with this JS to click the section's add-chart button (avoids toolbar ambiguity): (function(){{var s=document.querySelectorAll('.section-container');var last=s[s.length-1];var btn=last.querySelector('.add-chart-button');if(btn){{btn.click();return 'clicked'}}return 'not found'}})()  Then select '{chart_type}' from the chart picker."
+      ]
+    },
+    "add_first_control_to_section": {
+      "params": [
+        "chart_type"
+      ],
+      "steps": [
+        "Take a screenshot (no filename) to get visual context. Click the 'Add control in placeholder' button (class placeholder-add-control-button) in the center of the empty section, then select '{chart_type}'."
+      ]
+    },
+    "add_another_control_to_section": {
+      "params": [
+        "chart_type"
+      ],
+      "steps": [
+        "Take a screenshot (no filename) to get visual context. Click on the current section to select it. Then click the section's own 'add a control' button (class add-control-button, NOT the toolbar). Select '{chart_type}'."
+      ]
+    },
+    "add_new_section": {
+      "steps": [
+        "Take a screenshot (no filename) to get visual context. Use evaluate() with this JS to click the last add-section button: (function(){{var btns=document.querySelectorAll('.add-section-button');var last=btns[btns.length-1];if(last){{last.click();return 'clicked'}}return 'not found'}})()  Wait for the new empty section to appear."
+      ]
+    },
+    "add_text_to_section": {
+      "params": [
+        "text_content"
+      ],
+      "steps": [
+        "Take a screenshot (no filename) to get visual context. Click the 'Add chart in placeholder' button in the center of the empty section, then select 'Text' from the chart picker. Set the text content to '{text_content}'."
+      ]
+    },
+    "set_section_style_stretch": {
+      "steps": [
+        "Click 'open style menu', and set the 'arrangement' to 'stretch'"
       ]
     },
     "set_dimension": {
-      "params": ["dimension_name"],
+      "params": [
+        "dimension_name"
+      ],
       "steps": [
-        "In Setup tab, click the Dimension field > search '{dimension_name}' > select it"
+        "In the property panel, click the 'Setup' tab. Click the dimension chip (NOT the Data panel search bar), and select '{dimension_name}' from the field picker dropdown."
       ]
     },
     "add_dimension": {
-      "params": ["dimension_name"],
+      "params": [
+        "dimension_name"
+      ],
       "steps": [
-        "Click 'Add a dimension' > search '{dimension_name}' > select it"
+        "In the property panel, click the 'Setup' tab. Click 'Add dimension' and select '{dimension_name}' from the field picker dropdown."
       ]
     },
     "set_metric": {
-      "params": ["metric_name"],
+      "params": [
+        "metric_name"
+      ],
       "steps": [
-        "Click the Metric field > search '{metric_name}' > select it"
+        "In the property panel, click the 'Setup' tab. Click the metric chip (NOT the Data panel search bar), and select '{metric_name}' from the field picker dropdown."
+      ]
+    },
+    "set_metric_with_aggregation": {
+      "params": [
+        "metric_name",
+        "aggregation_type"
+      ],
+      "steps": [
+        "In the property panel 'Setup' tab, click the metric chip (NOT the Data panel search bar), select '{metric_name}', then change it to {aggregation_type} of {metric_name}."
       ]
     },
     "add_metric": {
-      "params": ["metric_name"],
+      "params": [
+        "metric_name"
+      ],
       "steps": [
-        "Click 'Add a metric' > search '{metric_name}' > select it"
+        "In the property panel, click the 'Setup' tab. Click 'Add metric' and select '{metric_name}' from the field picker dropdown."
+      ]
+    },
+    "add_metric_with_aggregation": {
+      "params": [
+        "metric_name",
+        "aggregation_type"
+      ],
+      "steps": [
+        "In the property panel 'Setup' tab, click 'Add metric', select '{metric_name}', then change it to {aggregation_type} of {metric_name}."
       ]
     },
     "style_set_title": {
-      "params": ["title_text"],
+      "params": [
+        "title_text"
+      ],
       "steps": [
-        "Enable the 'Show title' toggle at the top of the Style tab, then click the title text input field directly below it, use Ctrl+A to select all, then type '{title_text}'"
+        "In the Style tab, find 'Chart title' section, toggle 'Show title' on (mat-mdc-slide-toggle), then type '{title_text}' in the title text field."
       ]
     },
     "style_set_color": {
-      "params": ["color_value"],
+      "params": [
+        "color_value"
+      ],
       "steps": [
-        "Click the color swatch for Series 1 > click 'Add custom color' (+) button > in the hex input field use Ctrl+A then type '{color_value}' > click 'Done' or press Enter"
+        "In the Style tab, find the color picker (class color-preview-box) for Series 1 and set it to hex value '{color_value}'."
       ]
     },
     "style_set_font_size": {
-      "params": ["font_size"],
+      "params": [
+        "font_size"
+      ],
       "steps": [
-        "Click the 'Font size' dropdown > select '{font_size}' from the list (do not type into the field)"
+        "In the Style tab, find the font size dropdown and set it to '{font_size}'."
       ]
     },
     "style_toggle_x_axis_title": {
       "steps": [
-        "Scroll the Style panel to find X-Axis section, then enable the 'Show axis title' toggle"
+        "In the Style tab, find 'X-axis' section and toggle the axis title switch on (mat-mdc-slide-toggle)."
       ]
     },
     "style_toggle_y_axis_title": {
       "steps": [
-        "Scroll the Style panel to find Left Y-Axis section, then enable the 'Show axis title' toggle"
+        "In the Style tab, find 'Y-axis' section and toggle the axis title switch on (mat-mdc-slide-toggle)."
       ]
     },
     "style_toggle_shadow": {
       "steps": [
-        "Use find_text to search 'Add border shadow' in the Style panel, then click its checkbox to enable"
+        "In the Style tab, find 'Background and border' section and click 'Add border shadow' (aria-label 'Add border shadow')."
       ]
     },
     "style_set_legend_position": {
-      "params": ["position"],
+      "params": [
+        "position"
+      ],
       "steps": [
-        "Use find_text to search 'Legend' in the Style panel, click the Legend dropdown to open it, then select '{position}'"
+        "In the Style tab, find 'Legend' section and set position to '{position}' using the dropdown."
       ]
     },
     "style_toggle_data_labels": {
       "steps": [
-        "Use find_text to search 'Show data labels' in the Style panel, then click its checkbox to enable"
+        "In the Style tab, find 'Data labels' or 'Show data labels' and toggle it on (mat-mdc-slide-toggle)."
       ]
     },
     "style_toggle_compact_numbers": {
       "steps": [
-        "Click on the Metric field in the Setup tab to open it, then click the pencil/edit icon, find 'Compact Numbers' toggle in the metric editor, and enable it"
+        "In the Style tab, find 'Compact numbers' and toggle it on (mat-mdc-slide-toggle)."
       ]
     },
     "style_set_background_color": {
-      "params": ["color_value"],
+      "params": [
+        "color_value"
+      ],
       "steps": [
-        "Use find_text to search 'Background' in the Style panel, click the background color swatch > click 'Add custom color' (+) > use Ctrl+A then type '{color_value}' in the hex field > click 'Done' or press Enter"
-      ]
-    },
-
-    "set_chart_size": {
-      "params": ["width", "height"],
-      "steps": [
-        "With the chart selected, find the size controls in the right property panel (width and height input fields), set width to '{width}' and height to '{height}' by clicking each field, using Ctrl+A to select all, then typing the value"
+        "In the Style tab, find 'Background and border' section, click the Background color picker (class color-preview-box), and set it to hex value '{color_value}'."
       ]
     },
     "set_sort": {
-      "params": ["sort_field", "sort_order"],
+      "params": [
+        "sort_field",
+        "sort_order"
+      ],
       "steps": [
-        "In the Setup tab, click the 'Sort' field > search '{sort_field}' > select it, then click the sort-order toggle to set it to '{sort_order}'"
+        "In the property panel 'Setup' tab, scroll down to the 'Sort' section, set the sort field to '{sort_field}' and order to '{sort_order}'."
       ]
     },
     "set_row_limit": {
-      "params": ["row_limit"],
+      "params": [
+        "row_limit"
+      ],
       "steps": [
-        "In the Setup tab, click the 'Rows per page' or 'Default number of rows' field, use Ctrl+A to select all, then type '{row_limit}'"
+        "In the property panel 'Setup' tab, scroll down and set the row limit (aria-label 'Rows per page') to {row_limit}."
       ]
     },
-    "add_text_element": {
-      "params": ["position_description", "text_content"],
+    "others": {
+      "params": [
+        "others"
+      ],
       "steps": [
-        "Click 'Add a chart' in toolbar > select 'Text' > then vision_click(description=\"{position_description}\")",
-        "Double-click the text box to enter edit mode, use Ctrl+A to select all, then type '{text_content}'"
+        "In the property panel 'Style' tab, {others}"
       ]
     },
-    "add_date_range_control": {
-      "params": ["position_description"],
-      "steps": [
-        "Click 'Add a control' in toolbar > select 'Date range control' > then vision_click(description=\"{position_description}\")"
-      ]
-    },
-    "others":{
-      "params":["others"],
-      "steps":[
-        "In the Style Panel on the right side, set {others}"
-      ]
-    },
-
     "add_chart_filter": {
-      "params": ["filter_type", "field_name", "condition", "value"],
+      "params": [
+        "filter_type",
+        "field_name",
+        "condition",
+        "value"
+      ],
       "steps": [
-        "In the Setup tab, click 'ADD A FILTER' > click 'CREATE A FILTER' > select '{filter_type}' > choose field '{field_name}' > set condition to '{condition}' > enter value '{value}' > click 'Save'"
+        "In the property panel 'Setup' tab, scroll down to find the filter section. Click 'Add a filter' to open the filter dialog. Set type to {filter_type}, set field to '{field_name}', set condition to '{condition}', set value to '{value}', then click Save."
       ]
     },
-    "add_dropdown_control": {
-      "params": ["position_description", "control_field"],
+    "add_chart_filter_between": {
+      "params": [
+        "filter_type",
+        "field_name",
+        "value_start",
+        "value_end"
+      ],
       "steps": [
-        "Click 'Add a control' in toolbar > select 'Drop-down list' > then vision_click(description=\"{position_description}\")",
-        "In the Setup tab, click the Control field > search '{control_field}' > select it"
-      ]
-    },
-    "add_fixed_size_list_control": {
-      "params": ["position_description", "control_field"],
-      "steps": [
-        "Click 'Add a control' in toolbar > select 'Fixed-size list' > then vision_click(description=\"{position_description}\")",
-        "In the Setup tab, click the Control field > search '{control_field}' > select it"
-      ]
-    },
-    "add_checkbox_control": {
-      "params": ["position_description", "control_field"],
-      "steps": [
-        "Click 'Add a control' in toolbar > select 'Checkbox' > then vision_click(description=\"{position_description}\")",
-        "In the Setup tab, click the Control field > search '{control_field}' > select it"
+        "In the property panel 'Setup' tab, scroll down to find the filter section. Click 'Add a filter' to open the filter dialog. Set type to {filter_type}, set field to '{field_name}', select condition 'Between (>= && <=)' from the dropdown, enter '{value_start}' in the first value field and '{value_end}' in the second value field, then click Save."
       ]
     },
     "set_metric_aggregation": {
-      "params": ["metric_name", "aggregation_type"],
+      "params": [
+        "metric_name",
+        "aggregation_type"
+      ],
       "steps": [
-        "Click on the metric '{metric_name}' in the Setup tab to open it, click the pencil/edit icon, find the 'Aggregation' dropdown, and change it to '{aggregation_type}'"
+        "In the property panel 'Setup' tab, click the metric '{metric_name}' chip to open its options, then change the aggregation to '{aggregation_type}'."
       ]
     },
     "toggle_cross_filtering": {
       "steps": [
-        "In the Setup tab, scroll down to find 'Cross-filtering' toggle and click it to enable"
+        "In the property panel 'Setup' tab, scroll down to 'Chart interactions' and toggle 'Cross-filtering' on."
+      ]
+    },
+    "add_calculated_field": {
+      "params": [
+        "field_name",
+        "formula"
+      ],
+      "steps": [
+        "In the Data panel (far right), click 'Add a field' (aria-label 'Add a field', class add-field-button), then click 'Add a calculated field'. Type '{field_name}' in the Field Name input, type '{formula}' in the Formula editor, click Save, wait 2 seconds, then click Done."
+      ]
+    },
+    "style_set_font_color": {
+      "params": [
+        "color_value"
+      ],
+      "steps": [
+        "In the Style tab, find the font color picker and set it to hex value '{color_value}'."
+      ]
+    },
+    "set_report_title": {
+      "params": [
+        "report_title"
+      ],
+      "steps": [
+        "Click on the 'Add report title' placeholder text field on the canvas, clear it, and type '{report_title}'."
+      ]
+    },
+    "set_editor_title": {
+      "params": [
+        "report_title"
+      ],
+      "steps": [
+        "Click on the report title text 'Untitled Report' at the top-left of the editor, clear it, and type '{report_title}'."
       ]
     }
   }
