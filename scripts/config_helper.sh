@@ -21,7 +21,7 @@ EMPTY_SCHEMA='{
   "vertex_ai_project_id": "",
   "data_source": { "project_id": "", "dataset": "", "table_name": "" },
   "visualizations": [],
-  "layout_instructions": []
+  "responsive_rows": []
 }'
 
 # Helper: extract a top-level string value from flat JSON (handles "key": "value")
@@ -67,16 +67,16 @@ case "$COMMAND" in
 
         has_data=false
         has_viz=false
-        has_layout=false
+        has_rows=false
 
         [[ -n "$vertex" && -n "$bq_project" && -n "$dataset" && -n "$table" ]] && has_data=true
         array_has_items "visualizations" && has_viz=true
-        array_has_items "layout_instructions" && has_layout=true
+        array_has_items "responsive_rows" && has_rows=true
 
-        if $has_data && $has_viz && $has_layout; then
+        if $has_data && $has_viz && $has_rows; then
             echo "RESUME_FROM=complete"
         elif $has_data && $has_viz; then
-            echo "RESUME_FROM=step4"
+            echo "RESUME_FROM=step3"
         elif $has_data; then
             echo "RESUME_FROM=step2"
         else
@@ -105,7 +105,7 @@ case "$COMMAND" in
         [ -z "$dataset" ] && missing="$missing data_source.dataset,"
         [ -z "$table" ] && missing="$missing data_source.table_name,"
         array_has_items "visualizations" || missing="$missing visualizations,"
-        array_has_items "layout_instructions" || missing="$missing layout_instructions,"
+        array_has_items "responsive_rows" || missing="$missing responsive_rows,"
 
         if [ -n "$missing" ]; then
             # Trim trailing comma

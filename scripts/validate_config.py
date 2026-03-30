@@ -8,7 +8,7 @@ Checks:
   - legend_position is one of the allowed values
   - chart_type is a recognized type
   - metrics / dimensions arrays are non-empty (with scorecard exception for dimensions)
-  - layout_instructions count matches visualizations count
+  - responsive_rows indices are valid and cover all visualizations
 
 Exit codes:
   0  VALID
@@ -41,12 +41,12 @@ DIMENSION_OPTIONAL_TYPES = {"scorecard", "kpi"} | NON_DATA_TYPES | CONTROL_TYPES
 METRIC_OPTIONAL_TYPES = NON_DATA_TYPES | CONTROL_TYPES
 
 # Valid legend_position values (Looker Studio supported values per WORKFLOW.md)
-VALID_LEGEND_POSITIONS = {"top", "down", "right", "left"}
+VALID_LEGEND_POSITIONS = {"top", "bottom", "right"}
 
 # Valid filter conditions for chart-level filters
 VALID_FILTER_CONDITIONS = {
     "equals", "not_equals", "contains", "not_contains",
-    "starts_with", "ends_with", "in", "not_in",
+    "starts_with", "ends_with", "in", "not_in", "between",
     "greater_than", "greater_than_or_equal",
     "less_than", "less_than_or_equal",
     "is_null", "is_not_null", "regex",
@@ -94,9 +94,14 @@ def is_nonempty_string(value) -> bool:
 
 # ── Core validation ────────────────────────────────────────────────────────────
 
-def validate(config_path: str) -> list[str]:
-    """Return a list of error messages. Empty list means the config is valid."""
+def validate(config_path: str) -> tuple[list[str], list[str]] | list[str]:
+    """Return (errors, warnings) or just errors for backward compat.
+
+    Warnings are non-blocking issues (e.g. invalid config for chart type).
+    Errors block execution.
+    """
     errors = []
+    warnings = []
 
     if not os.path.isfile(config_path):
         return [f"File not found: {config_path}"]
@@ -123,7 +128,23 @@ def validate(config_path: str) -> list[str]:
             if not is_nonempty_string(ds.get(field, "")):
                 errors.append(f"data_source.{field}: required and must be non-empty")
 
-    # ── 3. visualizations ────────────────────────────────────────────────────
+    # ── 3. calculated_fields (optional) ─────────────────────────────────────
+    calc_fields = config.get("calculated_fields")
+    if calc_fields is not None:
+        if not isinstance(calc_fields, list):
+            errors.append("calculated_fields: must be an array")
+        else:
+            for cf_idx, cf in enumerate(calc_fields):
+                cfpfx = f"calculated_fields[{cf_idx}]"
+                if not isinstance(cf, dict):
+                    errors.append(f"{cfpfx}: must be a JSON object")
+                    continue
+                if not is_nonempty_string(cf.get("field_name", "")):
+                    errors.append(f"{cfpfx}.field_name: required and must be non-empty")
+                if not is_nonempty_string(cf.get("formula", "")):
+                    errors.append(f"{cfpfx}.formula: required and must be non-empty")
+
+    # ── 4. visualizations ────────────────────────────────────────────────────
     vizs = config.get("visualizations")
     if not isinstance(vizs, list) or len(vizs) == 0:
         errors.append("visualizations: required and must be a non-empty array")
@@ -157,8 +178,14 @@ def validate(config_path: str) -> list[str]:
                     errors.append(f"{pfx}.metrics: must contain at least one metric")
                 else:
                     for m_idx, m in enumerate(metrics):
-                        if not is_nonempty_string(m):
-                            errors.append(f"{pfx}.metrics[{m_idx}]: must be a non-empty string")
+                        if isinstance(m, dict):
+                            if not is_nonempty_string(m.get("name", "")):
+                                errors.append(f"{pfx}.metrics[{m_idx}].name: required and must be non-empty")
+                            agg = m.get("aggregation")
+                            if agg is not None and str(agg).strip().lower() not in VALID_AGGREGATIONS:
+                                errors.append(f"{pfx}.metrics[{m_idx}].aggregation: '{agg}' must be one of {sorted(VALID_AGGREGATIONS)}")
+                        elif not is_nonempty_string(m):
+                            errors.append(f"{pfx}.metrics[{m_idx}]: must be a non-empty string or object with 'name'")
 
             # dimensions (optional for scorecards, controls, and non-data types)
             dims = viz.get("dimensions")
@@ -204,19 +231,6 @@ def validate(config_path: str) -> list[str]:
                             if not is_nonempty_string(str(filt.get("value", ""))):
                                 errors.append(f"{fpfx}.value: required for condition '{cond}'")
 
-            # metric_aggregations (optional; validate if present)
-            metric_aggs = viz.get("metric_aggregations")
-            if metric_aggs is not None:
-                if not isinstance(metric_aggs, dict):
-                    errors.append(f"{pfx}.metric_aggregations: must be a JSON object")
-                else:
-                    for field_name, agg_type in metric_aggs.items():
-                        if not is_nonempty_string(str(agg_type)) or str(agg_type).strip().lower() not in VALID_AGGREGATIONS:
-                            errors.append(
-                                f"{pfx}.metric_aggregations.{field_name}: "
-                                f"'{agg_type}' must be one of {sorted(VALID_AGGREGATIONS)}"
-                            )
-
             # special_configurations (optional; validate contents if present)
             sc = viz.get("special_configurations")
             if sc is not None:
@@ -225,21 +239,85 @@ def validate(config_path: str) -> list[str]:
                 else:
                     _validate_special_config(sc, pfx, errors)
 
-    # ── 4. layout_instructions ───────────────────────────────────────────────
-    layout = config.get("layout_instructions")
-    if not isinstance(layout, list) or len(layout) == 0:
-        errors.append("layout_instructions: required and must be a non-empty array")
-    elif len(vizs) > 0 and len(layout) != len(vizs):
-        errors.append(
-            f"layout_instructions: has {len(layout)} entr{'y' if len(layout) == 1 else 'ies'} "
-            f"but visualizations has {len(vizs)}; counts must match 1-to-1"
-        )
+    # ── 4b. Chart-type constraint warnings (non-blocking) ──────────────────
+    from task_compiler import (
+        _canonical, VALID_CONFIGS_BY_CHART, CHART_DATA_LIMITS, _FILTERABLE_CONFIG_KEYS
+    )
+    for idx, viz in enumerate(vizs):
+        if not isinstance(viz, dict):
+            continue
+        ct_raw = viz.get("chart_type", "").strip()
+        canonical = _canonical(ct_raw)
+        pfx = f"visualizations[{idx}]"
 
-    return errors
+        # Warn about invalid special_configurations
+        sc = viz.get("special_configurations", {})
+        valid_keys = VALID_CONFIGS_BY_CHART.get(canonical, set())
+        if valid_keys and isinstance(sc, dict):
+            for key in sc:
+                if key in _FILTERABLE_CONFIG_KEYS and key not in valid_keys and sc.get(key):
+                    warnings.append(
+                        f"{pfx}.special_configurations.{key}: "
+                        f"'{key}' is not available for '{ct_raw}' — will be skipped"
+                    )
+
+        # Warn about excess metrics/dimensions
+        limits = CHART_DATA_LIMITS.get(canonical, {})
+        max_m = limits.get("max_metrics")
+        max_d = limits.get("max_dimensions")
+        metrics = viz.get("metrics", [])
+        dims = viz.get("dimensions", [])
+        if max_m is not None and isinstance(metrics, list) and len(metrics) > max_m:
+            warnings.append(
+                f"{pfx}: {ct_raw} supports max {max_m} metric(s), "
+                f"but {len(metrics)} provided — extras will be dropped"
+            )
+        if max_d is not None and isinstance(dims, list) and len(dims) > max_d:
+            warnings.append(
+                f"{pfx}: {ct_raw} supports max {max_d} dimension(s), "
+                f"but {len(dims)} provided — extras will be dropped"
+            )
+
+    # ── 5. responsive_rows ─────────────────────────────────────────────────
+    rows = config.get("responsive_rows")
+    if rows is not None:
+        if not isinstance(rows, list):
+            errors.append("responsive_rows: must be an array of arrays")
+        else:
+            all_indices = []
+            for r_idx, row in enumerate(rows):
+                rpfx = f"responsive_rows[{r_idx}]"
+                if not isinstance(row, list):
+                    errors.append(f"{rpfx}: must be an array of visualization indices")
+                    continue
+                for v_idx in row:
+                    if not isinstance(v_idx, int) or v_idx < 0:
+                        errors.append(f"{rpfx}: index {v_idx} must be a non-negative integer")
+                    elif len(vizs) > 0 and v_idx >= len(vizs):
+                        errors.append(f"{rpfx}: index {v_idx} is out of bounds (only {len(vizs)} visualizations)")
+                    all_indices.append(v_idx)
+
+            # Check for duplicates
+            seen = set()
+            for idx in all_indices:
+                if idx in seen:
+                    errors.append(f"responsive_rows: index {idx} appears more than once")
+                seen.add(idx)
+
+            # Check all vizs are covered
+            if len(vizs) > 0:
+                missing = set(range(len(vizs))) - seen
+                if missing:
+                    errors.append(
+                        f"responsive_rows: visualization indices {sorted(missing)} "
+                        f"are not assigned to any row"
+                    )
+
+    return errors, warnings
 
 
 def _validate_special_config(sc: dict, pfx: str, errors: list) -> None:
-    for color_field in ("chart_color", "background_color"):
+    for color_field in ("chart_color", "font_color", "background_color"):
         val = sc.get(color_field, "")
         if val and is_nonempty_string(val) and val.strip().lower() not in ("default", "none"):
             if not is_valid_hex(val.strip()):
@@ -292,21 +370,26 @@ exit codes:
     )
     args = parser.parse_args()
 
-    errors = validate(args.config)
+    errors, warnings = validate(args.config)
     valid = len(errors) == 0
 
     if args.json_output:
-        print(json.dumps({"valid": valid, "errors": errors}, indent=2))
+        print(json.dumps({"valid": valid, "errors": errors, "warnings": warnings}, indent=2))
         sys.exit(0 if valid else 1)
 
     if valid:
         print("VALID")
-        sys.exit(0)
     else:
         print("INVALID")
         for msg in errors:
             print(f"  \u2717 {msg}")
-        sys.exit(1)
+
+    if warnings:
+        print("\n[Warnings — will be auto-filtered during compilation]")
+        for msg in warnings:
+            print(f"  \u26a0 {msg}")
+
+    sys.exit(0 if valid else 1)
 
 
 if __name__ == "__main__":
