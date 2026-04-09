@@ -1,4 +1,93 @@
 {
+  "chart_canonical_aliases": {
+    "scorecard": "scorecard",
+    "kpi": "scorecard",
+    "bar": "bar",
+    "bar chart": "bar",
+    "horizontal bar": "bar",
+    "column": "bar",
+    "column chart": "bar",
+    "stacked_bar": "bar",
+    "stacked bar": "bar",
+    "stacked bar chart": "bar",
+    "100_stacked_bar": "bar",
+    "100% stacked bar": "bar",
+    "stacked_column": "bar",
+    "stacked column": "bar",
+    "stacked column chart": "bar",
+    "100_stacked_column": "bar",
+    "line": "line",
+    "line chart": "line",
+    "combo": "line",
+    "combo chart": "line",
+    "time_series": "time_series",
+    "time series": "time_series",
+    "time series chart": "time_series",
+    "sparkline": "time_series",
+    "area": "area",
+    "area chart": "area",
+    "stacked_area": "area",
+    "stacked area": "area",
+    "stacked area chart": "area",
+    "100_stacked_area": "area",
+    "pie": "pie",
+    "pie chart": "pie",
+    "donut": "pie",
+    "donut chart": "pie",
+    "waterfall": "waterfall",
+    "waterfall chart": "waterfall",
+    "scatter": "scatter",
+    "scatter chart": "scatter",
+    "bubble": "scatter",
+    "bubble chart": "scatter",
+    "geo": "geo",
+    "geo chart": "geo",
+    "map": "geo",
+    "google_maps": "geo",
+    "google maps": "geo",
+    "gauge": "gauge",
+    "bullet": "bullet",
+    "bullet chart": "bullet",
+    "funnel": "funnel",
+    "treemap": "treemap",
+    "table": "table",
+    "pivot_table": "pivot_table",
+    "pivot table": "pivot_table"
+  },
+  "chart_data_limits": {
+    "scorecard": { "max_metrics": 1, "max_dimensions": 1 },
+    "bar": { "max_metrics": 20, "max_dimensions": 2 },
+    "line": { "max_metrics": 5, "max_dimensions": 2 },
+    "time_series": { "max_metrics": 5, "max_dimensions": 2 },
+    "area": { "max_metrics": 5, "max_dimensions": 2 },
+    "pie": { "max_metrics": 1, "max_dimensions": 1 },
+    "waterfall": { "max_metrics": 1, "max_dimensions": 1 },
+    "scatter": { "max_metrics": 3, "max_dimensions": 3 },
+    "geo": { "max_metrics": 1, "max_dimensions": 1 },
+    "gauge": { "max_metrics": 1, "max_dimensions": 0 },
+    "bullet": { "max_metrics": 1, "max_dimensions": 0 },
+    "funnel": { "max_metrics": 1, "max_dimensions": 1 },
+    "treemap": { "max_metrics": 2, "max_dimensions": 2 },
+    "table": { "max_metrics": 50, "max_dimensions": 50 },
+    "pivot_table": { "max_metrics": 50, "max_dimensions": 50 }
+  },
+  "chart_style_constraints": {
+    "scorecard": ["font_size", "font_color", "chart_color", "background_color", "add_shadow", "compact_numbers", "others"],
+    "bar": ["font_size", "font_color", "chart_color", "background_color", "show_x_axis_title", "show_y_axis_title", "add_shadow", "legend_position", "show_data_labels", "compact_numbers", "cross_filtering", "others"],
+    "line": ["font_size", "font_color", "chart_color", "background_color", "show_x_axis_title", "show_y_axis_title", "add_shadow", "legend_position", "show_data_labels", "compact_numbers", "cross_filtering", "others"],
+    "time_series": ["font_size", "font_color", "chart_color", "background_color", "show_x_axis_title", "show_y_axis_title", "add_shadow", "legend_position", "show_data_labels", "compact_numbers", "cross_filtering", "others"],
+    "area": ["font_size", "font_color", "chart_color", "background_color", "show_x_axis_title", "show_y_axis_title", "add_shadow", "legend_position", "show_data_labels", "compact_numbers", "cross_filtering", "others"],
+    "pie": ["font_size", "font_color", "chart_color", "background_color", "add_shadow", "legend_position", "show_data_labels", "cross_filtering", "others"],
+    "waterfall": ["font_size", "font_color", "chart_color", "background_color", "show_x_axis_title", "show_y_axis_title", "add_shadow", "show_data_labels", "compact_numbers", "cross_filtering", "others"],
+    "scatter": ["font_size", "font_color", "chart_color", "background_color", "show_x_axis_title", "show_y_axis_title", "add_shadow", "legend_position", "cross_filtering", "others"],
+    "geo": ["chart_color", "background_color", "add_shadow", "legend_position", "cross_filtering", "others"],
+    "gauge": ["font_size", "font_color", "chart_color", "background_color", "add_shadow", "compact_numbers", "others"],
+    "bullet": ["font_size", "font_color", "chart_color", "background_color", "add_shadow", "show_data_labels", "compact_numbers", "others"],
+    "funnel": ["font_size", "font_color", "chart_color", "background_color", "add_shadow", "legend_position", "show_data_labels", "compact_numbers", "cross_filtering", "others"],
+    "treemap": ["font_size", "font_color", "chart_color", "background_color", "add_shadow", "legend_position", "cross_filtering", "others"],
+    "table": ["font_size", "font_color", "background_color", "add_shadow", "compact_numbers", "cross_filtering", "others"],
+    "pivot_table": ["font_size", "font_color", "background_color", "add_shadow", "compact_numbers", "others"]
+  },
   "chart_type_labels": {
     "table": "Table",
     "pivot_table": "Pivot table",
@@ -89,281 +178,242 @@
   "procedures": {
     "create_blank_report": {
       "steps": [
-        "Navigate to https://lookerstudio.google.com/navigation/reporting and create a new blank report"
+        "Navigate to https://lookerstudio.google.com/navigation/reporting and create a new blank report."
       ]
     },
     "connect_bigquery": {
-      "params": [
-        "project_id",
-        "dataset",
-        "table"
-      ],
+      "params": ["project_id", "dataset", "table"],
       "steps": [
-        "'Add data to report' > BigQuery > project '{project_id}' > dataset '{dataset}' > table '{table}' > Add > confirm"
+        "Add data to report > BigQuery > project '{project_id}' > dataset '{dataset}' > table '{table}' > Add > confirm."
       ]
     },
     "enable_responsive_layout": {
       "steps": [
-        "Enable Responsive Layout"
+        "Enable Responsive Layout."
       ]
     },
+
     "add_first_chart_to_section": {
-      "params": [
-        "chart_type"
-      ],
+      "params": ["chart_type", "section_idx"],
       "steps": [
-        "Take a screenshot (no filename) to get visual context. Click the 'Add chart in placeholder' button (class placeholder-add-chart-button) in the center of the empty section, then select '{chart_type}' from the chart picker."
+        "Use action \"add_chart_in_section\" to open the chart picker, with section_index={section_idx}.",
+        "Select '{chart_type}' from the chart picker that appeared."
       ]
     },
     "add_another_chart_to_section": {
-      "params": [
-        "chart_type"
-      ],
+      "params": ["chart_type", "section_idx"],
       "steps": [
-        "Take a screenshot (no filename) to get visual context. Use evaluate() with this JS to click the section's add-chart button (avoids toolbar ambiguity): (function(){{var s=document.querySelectorAll('.section-container');var last=s[s.length-1];var btn=last.querySelector('.add-chart-button');if(btn){{btn.click();return 'clicked'}}return 'not found'}})()  Then select '{chart_type}' from the chart picker."
+        "Use action \"add_chart_in_section\" to open the chart picker, with section_index={section_idx}.",
+        "Select '{chart_type}' from the chart picker that appeared."
       ]
     },
     "add_first_control_to_section": {
-      "params": [
-        "chart_type"
-      ],
+      "params": ["chart_type"],
       "steps": [
-        "Take a screenshot (no filename) to get visual context. Click the 'Add control in placeholder' button (class placeholder-add-control-button) in the center of the empty section, then select '{chart_type}'."
+        "Click 'Add control in placeholder'. Then select '{chart_type}' from the control picker."
       ]
     },
     "add_another_control_to_section": {
-      "params": [
-        "chart_type"
-      ],
+      "params": ["chart_type"],
       "steps": [
-        "Take a screenshot (no filename) to get visual context. Click on the current section to select it. Then click the section's own 'add a control' button (class add-control-button, NOT the toolbar). Select '{chart_type}'."
+        "Click the section-level 'add a control' button (not the toolbar). Then select '{chart_type}' from the control picker."
       ]
     },
     "add_new_section": {
       "steps": [
-        "Take a screenshot (no filename) to get visual context. Use evaluate() with this JS to click the last add-section button: (function(){{var btns=document.querySelectorAll('.add-section-button');var last=btns[btns.length-1];if(last){{last.click();return 'clicked'}}return 'not found'}})()  Wait for the new empty section to appear."
+        "Use action \"add_section\" to add a new empty section below the last section."
       ]
     },
     "add_text_to_section": {
-      "params": [
-        "text_content"
-      ],
+      "params": ["text_content"],
       "steps": [
-        "Take a screenshot (no filename) to get visual context. Click the 'Add chart in placeholder' button in the center of the empty section, then select 'Text' from the chart picker. Set the text content to '{text_content}'."
+        "Click 'Add chart in placeholder' in the empty section.",
+        "Select 'Text' from the chart picker.",
+        "Type '{text_content}' in the text box that appears."
       ]
     },
     "set_section_style_stretch": {
+      "params": ["section_idx"],
       "steps": [
-        "Click 'open style menu', and set the 'arrangement' to 'stretch'"
+        "Use action \"set_section_stretch\" to set the section layout to Stretch, with section_index={section_idx}."
       ]
     },
+
     "set_dimension": {
-      "params": [
-        "dimension_name"
-      ],
+      "params": ["dimension_name"],
       "steps": [
-        "In the property panel, click the 'Setup' tab. Click the dimension chip (NOT the Data panel search bar), and select '{dimension_name}' from the field picker dropdown."
+        "Use action \"replace_dimension\" to open the field picker for the first dimension chip, with dim_index=0.",
+        "Use action \"search_field_picker\" to find and select the field, with field_name='{dimension_name}'."
       ]
     },
     "add_dimension": {
-      "params": [
-        "dimension_name"
-      ],
+      "params": ["dimension_name"],
       "steps": [
-        "In the property panel, click the 'Setup' tab. Click 'Add dimension' and select '{dimension_name}' from the field picker dropdown."
+        "In the Setup tab, click 'Add dimension'.to add the second dimension of the chart",
+        "Use action \"search_field_picker\" to find and select the field, with field_name='{dimension_name}'."
       ]
     },
     "set_metric": {
-      "params": [
-        "metric_name"
-      ],
+      "params": ["metric_name"],
       "steps": [
-        "In the property panel, click the 'Setup' tab. Click the metric chip (NOT the Data panel search bar), and select '{metric_name}' from the field picker dropdown."
+        "In the Setup tab, click the existing metric chip's text.",
+        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'."
       ]
     },
     "set_metric_with_aggregation": {
-      "params": [
-        "metric_name",
-        "aggregation_type"
-      ],
+      "params": ["metric_name", "aggregation_type"],
       "steps": [
-        "In the property panel 'Setup' tab, click the metric chip (NOT the Data panel search bar), select '{metric_name}', then change it to {aggregation_type} of {metric_name}."
+        "In the Setup tab, click the existing metric chip's text.",
+        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'.",
+        "Use action \"set_aggregation\" to change the metric's aggregation, with aggregation_type='{aggregation_type}'."
       ]
     },
     "add_metric": {
-      "params": [
-        "metric_name"
-      ],
+      "params": ["metric_name"],
       "steps": [
-        "In the property panel, click the 'Setup' tab. Click 'Add metric' and select '{metric_name}' from the field picker dropdown."
+        "In the Setup tab, click 'Add metric'.to add the second metric of the chart",
+        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'."
       ]
     },
     "add_metric_with_aggregation": {
-      "params": [
-        "metric_name",
-        "aggregation_type"
-      ],
+      "params": ["metric_name", "aggregation_type"],
       "steps": [
-        "In the property panel 'Setup' tab, click 'Add metric', select '{metric_name}', then change it to {aggregation_type} of {metric_name}."
-      ]
-    },
-    "style_set_title": {
-      "params": [
-        "title_text"
-      ],
-      "steps": [
-        "In the Style tab, find 'Chart title' section, toggle 'Show title' on (mat-mdc-slide-toggle), then type '{title_text}' in the title text field."
-      ]
-    },
-    "style_set_color": {
-      "params": [
-        "color_value"
-      ],
-      "steps": [
-        "In the Style tab, find the color picker (class color-preview-box) for Series 1 and set it to hex value '{color_value}'."
-      ]
-    },
-    "style_set_font_size": {
-      "params": [
-        "font_size"
-      ],
-      "steps": [
-        "In the Style tab, find the font size dropdown and set it to '{font_size}'."
-      ]
-    },
-    "style_toggle_x_axis_title": {
-      "steps": [
-        "In the Style tab, find 'X-axis' section and toggle the axis title switch on (mat-mdc-slide-toggle)."
-      ]
-    },
-    "style_toggle_y_axis_title": {
-      "steps": [
-        "In the Style tab, find 'Y-axis' section and toggle the axis title switch on (mat-mdc-slide-toggle)."
-      ]
-    },
-    "style_toggle_shadow": {
-      "steps": [
-        "In the Style tab, find 'Background and border' section and click 'Add border shadow' (aria-label 'Add border shadow')."
-      ]
-    },
-    "style_set_legend_position": {
-      "params": [
-        "position"
-      ],
-      "steps": [
-        "In the Style tab, find 'Legend' section and set position to '{position}' using the dropdown."
-      ]
-    },
-    "style_toggle_data_labels": {
-      "steps": [
-        "In the Style tab, find 'Data labels' or 'Show data labels' and toggle it on (mat-mdc-slide-toggle)."
-      ]
-    },
-    "style_toggle_compact_numbers": {
-      "steps": [
-        "In the Style tab, find 'Compact numbers' and toggle it on (mat-mdc-slide-toggle)."
-      ]
-    },
-    "style_set_background_color": {
-      "params": [
-        "color_value"
-      ],
-      "steps": [
-        "In the Style tab, find 'Background and border' section, click the Background color picker (class color-preview-box), and set it to hex value '{color_value}'."
+        "In the Setup tab, click 'Add metric'.",
+        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'.",
+        "Use action \"set_aggregation\" to change the metric's aggregation, with aggregation_type='{aggregation_type}'."
       ]
     },
     "set_sort": {
-      "params": [
-        "sort_field",
-        "sort_order"
-      ],
+      "params": ["sort_field", "sort_order"],
       "steps": [
-        "In the property panel 'Setup' tab, scroll down to the 'Sort' section, set the sort field to '{sort_field}' and order to '{sort_order}'."
+        "In the Setup tab, set the sort field to '{sort_field}' and sort order to '{sort_order}'."
       ]
     },
     "set_row_limit": {
-      "params": [
-        "row_limit"
-      ],
+      "params": ["row_limit"],
       "steps": [
-        "In the property panel 'Setup' tab, scroll down and set the row limit (aria-label 'Rows per page') to {row_limit}."
-      ]
-    },
-    "others": {
-      "params": [
-        "others"
-      ],
-      "steps": [
-        "In the property panel 'Style' tab, {others}"
-      ]
-    },
-    "add_chart_filter": {
-      "params": [
-        "filter_type",
-        "field_name",
-        "condition",
-        "value"
-      ],
-      "steps": [
-        "In the property panel 'Setup' tab, scroll down to find the filter section. Click 'Add a filter' to open the filter dialog. Set type to {filter_type}, set field to '{field_name}', set condition to '{condition}', set value to '{value}', then click Save."
-      ]
-    },
-    "add_chart_filter_between": {
-      "params": [
-        "filter_type",
-        "field_name",
-        "value_start",
-        "value_end"
-      ],
-      "steps": [
-        "In the property panel 'Setup' tab, scroll down to find the filter section. Click 'Add a filter' to open the filter dialog. Set type to {filter_type}, set field to '{field_name}', select condition 'Between (>= && <=)' from the dropdown, enter '{value_start}' in the first value field and '{value_end}' in the second value field, then click Save."
-      ]
-    },
-    "set_metric_aggregation": {
-      "params": [
-        "metric_name",
-        "aggregation_type"
-      ],
-      "steps": [
-        "In the property panel 'Setup' tab, click the metric '{metric_name}' chip to open its options, then change the aggregation to '{aggregation_type}'."
+        "In the Setup tab, set row limit to {row_limit}."
       ]
     },
     "toggle_cross_filtering": {
       "steps": [
-        "In the property panel 'Setup' tab, scroll down to 'Chart interactions' and toggle 'Cross-filtering' on."
+        "In the Setup tab, enable the 'Cross-filtering' toggle."
+      ]
+    },
+    "add_chart_filter": {
+      "params": ["filter_type", "field_name", "condition", "value"],
+      "steps": [
+        "In the Setup tab, click 'Add a filter' to open the filter dialog.",
+        "Set type to {filter_type}, field to '{field_name}', condition to '{condition}', value to '{value}'. Then click 'Save'."
+      ]
+    },
+    "add_chart_filter_between": {
+      "params": ["filter_type", "field_name", "value_start", "value_end"],
+      "steps": [
+        "In the Setup tab, click 'Add a filter' to open the filter dialog.",
+        "Set type to {filter_type}, field to '{field_name}', condition to 'Between (>= && <=)', first value to '{value_start}', second value to '{value_end}'. Then click 'Save'."
       ]
     },
     "add_calculated_field": {
-      "params": [
-        "field_name",
-        "formula"
-      ],
+      "params": ["field_name", "formula"],
       "steps": [
-        "In the Data panel (far right), click 'Add a field' (aria-label 'Add a field', class add-field-button), then click 'Add a calculated field'. Type '{field_name}' in the Field Name input, type '{formula}' in the Formula editor, click Save, wait 2 seconds, then click Done."
+        "In the Data panel, click 'Add a field'. Then click 'Add a calculated field'.",
+        "Name the field '{field_name}'. Click the formula text box, clear it, and enter: {formula}",
+        "Click 'Save'. Then click 'Done'."
+      ]
+    },
+
+    "style_set_title": {
+      "params": ["title_text"],
+      "steps": [
+        "Make sure the chart is selected. Use action \"set_chart_title\" to enable the title and set its text, with title_text='{title_text}'."
+      ]
+    },
+    "style_set_color": {
+      "params": ["color_value"],
+      "steps": [
+        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Series'.",
+        "Find the first color swatch (the colored square) and click it to open the color picker. Enter the hex value '{color_value}' and confirm."
+      ]
+    },
+    "style_set_font_size": {
+      "params": ["font_size"],
+      "steps": [
+        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Font size'.",
+        "Set the font size field to '{font_size}'."
       ]
     },
     "style_set_font_color": {
-      "params": [
-        "color_value"
-      ],
+      "params": ["color_value"],
       "steps": [
-        "In the Style tab, find the font color picker and set it to hex value '{color_value}'."
+        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Font color'.",
+        "Set the font color to hex '{color_value}'."
+      ]
+    },
+    "style_toggle_x_axis_title": {
+      "steps": [
+        "Make sure the chart is selected. Use action \"enable_axis_title\" to enable the dimension axis title, with axis='x'."
+      ]
+    },
+    "style_toggle_y_axis_title": {
+      "steps": [
+        "Make sure the chart is selected. Use action \"enable_axis_title\" to enable the metric axis title, with axis='y'."
+      ]
+    },
+    "style_toggle_shadow": {
+      "steps": [
+        "Use action \"enable_shadow\" to enable the border shadow."
+      ]
+    },
+    "style_set_legend_position": {
+      "params": ["position"],
+      "steps": [
+        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Display legend'.",
+        "Find the 'Position' dropdown near 'Display legend'. Set it to '{position}'."
+      ]
+    },
+    "style_toggle_data_labels": {
+      "steps": [
+        "Use action \"enable_data_labels\" to enable the data labels."
+      ]
+    },
+    "style_toggle_compact_numbers": {
+      "steps": [
+        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Compact numbers'.",
+        "Enable the 'Compact numbers' toggle."
+      ]
+    },
+    "style_set_background_color": {
+      "params": ["color_value"],
+      "steps": [
+        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Add border shadow'.",
+        "Find the 'Background' color swatch near 'Add border shadow'. Click it and set the hex value to '{color_value}'."
+      ]
+    },
+    "others": {
+      "params": ["others"],
+      "steps": [
+        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='{others}'.",
+        "In the Style tab, {others}."
+      ]
+    },
+    "set_metric_aggregation": {
+      "params": ["metric_name", "aggregation_type"],
+      "steps": [
+        "In the Setup tab, click the metric chip for '{metric_name}' to open its edit panel.",
+        "Use action \"set_aggregation\" to change the aggregation, with aggregation_type='{aggregation_type}'."
       ]
     },
     "set_report_title": {
-      "params": [
-        "report_title"
-      ],
+      "params": ["report_title"],
       "steps": [
-        "Click on the 'Add report title' placeholder text field on the canvas, clear it, and type '{report_title}'."
+        "Click at the first row the report, find the textbox and rename to '{report_title}'"
       ]
     },
     "set_editor_title": {
-      "params": [
-        "report_title"
-      ],
+      "params": ["report_title"],
       "steps": [
-        "Click on the report title text 'Untitled Report' at the top-left of the editor, clear it, and type '{report_title}'."
+        "Click 'Untitled Report' at the top of the editor (aria-label='Rename'). Then clear the text and type '{report_title}'."
       ]
     }
   }
