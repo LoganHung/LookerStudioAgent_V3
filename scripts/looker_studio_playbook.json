@@ -194,93 +194,82 @@
     },
 
     "add_first_chart_to_section": {
-      "params": ["chart_type", "section_idx"],
+      "params": ["chart_type"],
       "steps": [
-        "Use action \"add_chart_in_section\" to open the chart picker, with section_index={section_idx}.",
-        "Select '{chart_type}' from the chart picker that appeared."
+        "Click at the 'Add Chart' placeholder and select '{chart_type}'. Then wait 2 sec."
       ]
     },
     "add_another_chart_to_section": {
-      "params": ["chart_type", "section_idx"],
+      "params": ["chart_type"],
       "steps": [
-        "Use action \"add_chart_in_section\" to open the chart picker, with section_index={section_idx}.",
-        "Select '{chart_type}' from the chart picker that appeared."
+        "Find the visualization you just configured in the DOM tree (its [N] index). Call hover_and_click_revealed with the same index and button_aria_label='Add a chart', then select '{chart_type}'. Then wait 2 sec."
       ]
     },
     "add_first_control_to_section": {
       "params": ["chart_type"],
       "steps": [
-        "Click 'Add control in placeholder'. Then select '{chart_type}' from the control picker."
+        "Click the 'Add control' placeholder and select '{chart_type}'. Then wait 2 sec."
       ]
     },
     "add_another_control_to_section": {
       "params": ["chart_type"],
       "steps": [
-        "Click the section-level 'add a control' button (not the toolbar). Then select '{chart_type}' from the control picker."
+        "Find the visualization you just configured in the DOM tree (its [N] index). Call hover_and_click_revealed with the same index and button_aria_label='Add a control', then select '{chart_type}'. Then wait 2 sec."
       ]
     },
     "add_new_section": {
+      "params": ["chart_type"],
       "steps": [
-        "Use action \"add_section\" to add a new empty section below the last section."
+        "Click 'Insert' in the toolbar and select '{chart_type}'. Then wait 2 sec."
       ]
     },
     "add_text_to_section": {
       "params": ["text_content"],
       "steps": [
-        "Click 'Add chart in placeholder' in the empty section.",
-        "Select 'Text' from the chart picker.",
+        "Click 'Insert' in the toolbar and select 'Text'.",
         "Type '{text_content}' in the text box that appears."
       ]
     },
     "set_section_style_stretch": {
-      "params": ["section_idx"],
       "steps": [
-        "Use action \"set_section_stretch\" to set the section layout to Stretch, with section_index={section_idx}."
+        "Find the visualization you just configured in the DOM tree (its [N] index). Call hover_and_click_revealed with the same index and button_aria_label='Open style menu', then select 'stretch'."
       ]
     },
 
     "set_dimension": {
       "params": ["dimension_name"],
       "steps": [
-        "Use action \"replace_dimension\" to open the field picker for the first dimension chip, with dim_index=0.",
-        "Use action \"search_field_picker\" to find and select the field, with field_name='{dimension_name}'."
+        "In the Setup tab, change the default dimension to '{dimension_name}'."
       ]
     },
     "add_dimension": {
       "params": ["dimension_name"],
       "steps": [
-        "In the Setup tab, click 'Add dimension'.to add the second dimension of the chart",
-        "Use action \"search_field_picker\" to find and select the field, with field_name='{dimension_name}'."
+        "In the Setup tab, click 'Add dimension' and click '{dimension_name}'."
       ]
     },
     "set_metric": {
       "params": ["metric_name"],
       "steps": [
-        "In the Setup tab, click the existing metric chip's text.",
-        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'."
+        "In the Setup tab, change the default metric to '{metric_name}'."
       ]
     },
     "set_metric_with_aggregation": {
       "params": ["metric_name", "aggregation_type"],
       "steps": [
-        "In the Setup tab, click the existing metric chip's text.",
-        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'.",
-        "Use action \"set_aggregation\" to change the metric's aggregation, with aggregation_type='{aggregation_type}'."
+        "In the Setup tab, change the default metric to '{metric_name}', then change its aggregation to '{aggregation_type}'. After that sendkey: Escape"
       ]
     },
     "add_metric": {
       "params": ["metric_name"],
       "steps": [
-        "In the Setup tab, click 'Add metric'.to add the second metric of the chart",
-        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'."
+        "In the Setup tab, click 'Add metric' and click '{metric_name}'."
       ]
     },
     "add_metric_with_aggregation": {
       "params": ["metric_name", "aggregation_type"],
       "steps": [
-        "In the Setup tab, click 'Add metric'.",
-        "Use action \"search_field_picker\" to find and select the field, with field_name='{metric_name}'.",
-        "Use action \"set_aggregation\" to change the metric's aggregation, with aggregation_type='{aggregation_type}'."
+        "In the Setup tab, click 'Add metric' and click '{metric_name}', then change its aggregation to '{aggregation_type}'. After that sendkey: Escape"
       ]
     },
     "set_sort": {
@@ -297,7 +286,7 @@
     },
     "toggle_cross_filtering": {
       "steps": [
-        "In the Setup tab, enable the 'Cross-filtering' toggle."
+        "In the Setup tab, enable the 'Cross-filtering' toggle (aria-label='Cross-filtering')."
       ]
     },
     "add_chart_filter": {
@@ -317,7 +306,7 @@
     "add_calculated_field": {
       "params": ["field_name", "formula"],
       "steps": [
-        "In the Data panel, click 'Add a field'. Then click 'Add a calculated field'.",
+        "In the Data panel on the right, click 'Add a field' (aria-label='Add a field'). Then click 'Add a calculated field'.",
         "Name the field '{field_name}'. Click the formula text box, clear it, and enter: {formula}",
         "Click 'Save'. Then click 'Done'."
       ]
@@ -326,94 +315,86 @@
     "style_set_title": {
       "params": ["title_text"],
       "steps": [
-        "Make sure the chart is selected. Use action \"set_chart_title\" to enable the title and set its text, with title_text='{title_text}'."
+        "Enable the 'Show title' toggle if off, then set the chart title to '{title_text}'."
       ]
     },
     "style_set_color": {
       "params": ["color_value"],
       "steps": [
-        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Series'.",
-        "Find the first color swatch (the colored square) and click it to open the color picker. Enter the hex value '{color_value}' and confirm."
+        "Set the series color to '{color_value}'."
       ]
     },
     "style_set_font_size": {
       "params": ["font_size"],
       "steps": [
-        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Font size'.",
-        "Set the font size field to '{font_size}'."
+        "Set the font size to '{font_size}'."
       ]
     },
     "style_set_font_color": {
       "params": ["color_value"],
       "steps": [
-        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Font color'.",
-        "Set the font color to hex '{color_value}'."
+        "Set the font color to '{color_value}'."
       ]
     },
     "style_toggle_x_axis_title": {
       "steps": [
-        "Make sure the chart is selected. Use action \"enable_axis_title\" to enable the dimension axis title, with axis='x'."
+        "Enable 'Show axes' if off. Then enable the FIRST 'Show axis title' toggle (X-axis) if off."
       ]
     },
     "style_toggle_y_axis_title": {
       "steps": [
-        "Make sure the chart is selected. Use action \"enable_axis_title\" to enable the metric axis title, with axis='y'."
+        "Enable 'Show axes' if off. Then enable the SECOND 'Show axis title' toggle (Y-axis) if off."
       ]
     },
     "style_toggle_shadow": {
       "steps": [
-        "Use action \"enable_shadow\" to enable the border shadow."
+        "Enable 'Add border shadow' if off."
       ]
     },
     "style_set_legend_position": {
       "params": ["position"],
       "steps": [
-        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Display legend'.",
-        "Find the 'Position' dropdown near 'Display legend'. Set it to '{position}'."
+        "Set the legend position to '{position}'."
       ]
     },
     "style_toggle_data_labels": {
       "steps": [
-        "Use action \"enable_data_labels\" to enable the data labels."
+        "Enable 'Show data labels' if off."
       ]
     },
     "style_toggle_compact_numbers": {
       "steps": [
-        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Compact numbers'.",
-        "Enable the 'Compact numbers' toggle."
+        "Enable 'Compact numbers' if off."
       ]
     },
     "style_set_background_color": {
       "params": ["color_value"],
       "steps": [
-        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='Add border shadow'.",
-        "Find the 'Background' color swatch near 'Add border shadow'. Click it and set the hex value to '{color_value}'."
+        "Set the background color to '{color_value}'."
       ]
     },
     "others": {
       "params": ["others"],
       "steps": [
-        "Use action \"scroll_to_style_option\" to scroll the Style panel, with aria_label='{others}'.",
-        "In the Style tab, {others}."
+        "{others}"
       ]
     },
     "set_metric_aggregation": {
       "params": ["metric_name", "aggregation_type"],
       "steps": [
-        "In the Setup tab, click the metric chip for '{metric_name}' to open its edit panel.",
-        "Use action \"set_aggregation\" to change the aggregation, with aggregation_type='{aggregation_type}'."
+        "In the Setup tab, change the aggregation of '{metric_name}' to '{aggregation_type}'.After that sendkey: Escape"
       ]
     },
     "set_report_title": {
       "params": ["report_title"],
       "steps": [
-        "Click at the first row the report, find the textbox and rename to '{report_title}'"
+        "Double-click the report title on the canvas, and type '{report_title}'."
       ]
     },
     "set_editor_title": {
       "params": ["report_title"],
       "steps": [
-        "Click 'Untitled Report' at the top of the editor (aria-label='Rename'). Then clear the text and type '{report_title}'."
+        "Click the report name at the top of the editor and rename it to '{report_title}'."
       ]
     }
   }

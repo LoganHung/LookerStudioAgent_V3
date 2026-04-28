@@ -128,7 +128,7 @@ _FILTERABLE_CONFIG_KEYS = {
 def _compile_viz_steps(
     viz: dict, viz_idx: int, is_first_in_section: bool,
     calc_field_names: set, playbook: dict, skipped: list,
-    row_idx: int = 1,
+    placed_by_insert: bool = False,
 ) -> list[str]:
     """Compile all steps for a single visualization. Returns raw step strings (no numbering)."""
     steps = []
@@ -190,10 +190,11 @@ def _compile_viz_steps(
         if control_field:
             steps.append(f"Set the control's field to '{control_field}'")
     else:
-        if is_first_in_section:
-            steps.extend(expand_procedure("add_first_chart_to_section", playbook, {"chart_type": chart_type_label, "section_idx": row_idx}))
-        else:
-            steps.extend(expand_procedure("add_another_chart_to_section", playbook, {"chart_type": chart_type_label, "section_idx": row_idx}))
+        if not placed_by_insert:
+            if is_first_in_section:
+                steps.extend(expand_procedure("add_first_chart_to_section", playbook, {"chart_type": chart_type_label}))
+            else:
+                steps.extend(expand_procedure("add_another_chart_to_section", playbook, {"chart_type": chart_type_label}))
 
     # Dimensions
     dimensions = viz.get("dimensions", [])
@@ -373,15 +374,11 @@ def compile_config_phased(config_path: str, playbook_path: str = None) -> dict:
 
     total_rows = len(responsive_rows)
     for row_idx, row_viz_indices in enumerate(responsive_rows, start=1):
-        # Row header — helps agent track progress after message compaction
-        row_chart_names = [
-            visualizations[vi].get("title") or visualizations[vi].get("chart_type", "chart")
-            for vi in row_viz_indices if vi < len(visualizations)
-        ]
-        chart_steps.append(f"--- ROW {row_idx} of {total_rows}: {', '.join(row_chart_names)} ---")
-
         if row_idx > 1:
-            chart_steps.extend(expand_procedure("add_new_section", playbook))
+            first_vi = row_viz_indices[0] if row_viz_indices else None
+            first_viz = visualizations[first_vi] if first_vi is not None and first_vi < len(visualizations) else None
+            first_chart_label = resolve_chart_type(first_viz.get("chart_type", "bar"), playbook) if first_viz else "Bar chart"
+            chart_steps.extend(expand_procedure("add_new_section", playbook, {"chart_type": first_chart_label}))
 
         for pos_in_row, viz_idx in enumerate(row_viz_indices):
             if viz_idx >= len(visualizations):
@@ -391,16 +388,15 @@ def compile_config_phased(config_path: str, playbook_path: str = None) -> dict:
             chart_steps.extend(_compile_viz_steps(
                 viz, viz_idx, is_first_in_section=(pos_in_row == 0),
                 calc_field_names=calc_field_names, playbook=playbook, skipped=skipped,
-                row_idx=row_idx,
+                placed_by_insert=(row_idx > 1 and pos_in_row == 0),
             ))
 
         if len(row_viz_indices) > 1:
-            chart_steps.extend(expand_procedure("set_section_style_stretch", playbook, {"section_idx": row_idx}))
+            chart_steps.extend(expand_procedure("set_section_style_stretch", playbook))
 
     # === Footer + Report Title — appended to chart creation phase ===
     created_on = datetime.now().strftime("%m/%d/%Y")
     footer_text = f"Looker Studio Agent created the dashboard on {created_on}"
-    chart_steps.extend(expand_procedure("add_new_section", playbook))
     chart_steps.extend(expand_procedure("add_text_to_section", playbook, {"text_content": footer_text}))
 
     description = f"Build all charts ({len(responsive_rows)} rows, {len(all_viz_labels)} charts) + footer"
@@ -438,14 +434,7 @@ def compile_config_phased(config_path: str, playbook_path: str = None) -> dict:
     }
 
 
-TODO_RULES_HEADER = """# Rules (always follow)
-- When a step says "Use <action_name>", call that custom action directly — do NOT try to do it manually.
-- Use search_field_picker to select fields — do NOT type into the picker search box manually.
-- Use add_section to add new sections — do NOT try to find the '+' button.
-- Use set_chart_title / enable_axis_title for Style tab operations — they handle scrolling automatically.
-- Use set_aggregation to change metric aggregation — do NOT click the aggregation dropdown manually.
-- If stuck after 2 attempts, press Escape and try a different approach.
-"""
+TODO_RULES_HEADER = ""
 
 
 def generate_todo(phases: list[dict], todo_path: str) -> None:
@@ -521,10 +510,13 @@ def compile_config(config_path: str, playbook_path: str = None) -> dict:
 
     for row_idx, row_viz_indices in enumerate(responsive_rows, start=1):
         if row_idx > 1:
-            add_procedure("add_new_section")
+            first_vi = row_viz_indices[0] if row_viz_indices else None
+            first_viz_raw = visualizations[first_vi].get("chart_type", "bar").strip() if first_vi is not None and first_vi < len(visualizations) else "bar"
+            add_procedure("add_new_section", {"chart_type": resolve_chart_type(first_viz_raw, playbook)})
 
         for pos_in_row, viz_idx in enumerate(row_viz_indices):
             is_first_in_section = (pos_in_row == 0)
+            placed_by_insert = (row_idx > 1 and pos_in_row == 0)
 
             if viz_idx >= len(visualizations):
                 continue
@@ -588,10 +580,11 @@ def compile_config(config_path: str, playbook_path: str = None) -> dict:
                 if control_field:
                     add(f"Set the control's field to '{control_field}'")
             else:
-                if is_first_in_section:
-                    add_procedure("add_first_chart_to_section", {"chart_type": chart_type_label, "section_idx": row_idx})
-                else:
-                    add_procedure("add_another_chart_to_section", {"chart_type": chart_type_label, "section_idx": row_idx})
+                if not placed_by_insert:
+                    if is_first_in_section:
+                        add_procedure("add_first_chart_to_section", {"chart_type": chart_type_label})
+                    else:
+                        add_procedure("add_another_chart_to_section", {"chart_type": chart_type_label})
 
             # Dimensions
             dimensions = viz.get("dimensions", [])
@@ -687,12 +680,11 @@ def compile_config(config_path: str, playbook_path: str = None) -> dict:
 
         # After all charts in this row, set section style to stretch
         if len(row_viz_indices) > 1:
-            add_procedure("set_section_style_stretch", {"section_idx": row_idx})
+            add_procedure("set_section_style_stretch")
 
     # === Footer: creation timestamp text box ===
     created_on = datetime.now().strftime("%m/%d/%Y")
     footer_text = f"Looker Studio Agent created the dashboard on {created_on}"
-    add_procedure("add_new_section")
     add_procedure("add_text_to_section", {"text_content": footer_text})
 
     # === Report Title (canvas placeholder + editor title bar) ===

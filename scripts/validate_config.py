@@ -53,7 +53,7 @@ VALID_FILTER_CONDITIONS = {
 }
 
 # Valid metric aggregation types
-VALID_AGGREGATIONS = {"sum", "avg", "count", "count_distinct", "min", "max", "none", "auto"}
+VALID_AGGREGATIONS = {"sum", "avg", "count", "count distinct", "min", "max", "none", "auto"}
 
 # All recognized chart type keys and aliases (mirrors looker_studio_playbook.json)
 KNOWN_CHART_TYPES = {

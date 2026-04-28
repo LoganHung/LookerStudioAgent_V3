@@ -79,7 +79,7 @@ description: Automates the design and creation of Looker Studio dashboards. Use 
    | "only show where X equals Y" | `filters: [{ type: include, field: X, condition: equals, value: Y }]` |
    | "exclude / hide X = Y" | `filters: [{ type: exclude, field: X, condition: equals, value: Y }]` |
    | "where X contains / starts with / is greater than Y" | map to `condition`: `contains` / `starts_with` / `greater_than` |
-   | "average / count / max of X" | `metrics: [{"name": "X", "aggregation": "AVG|COUNT|MAX"}]` (valid: SUM, AVG, COUNT, COUNT_DISTINCT, MIN, MAX) |
+   | "average / count / max of X" | `metrics: [{"name": "X", "aggregation": "AVG|COUNT|MAX"}]` (valid: SUM, AVG, COUNT, COUNT DISTINCT, MIN, MAX) |
    | "color" | hex code |
    | "enable label, effect, or title" | boolean `true` / `false` |
    | "font size" | number |
