@@ -24,8 +24,8 @@
       "metrics": ["Churn_Rate"],
       "dimensions": [],
       "special_configurations": {
-        "compact_numbers": false,
-        "show_data_labels": false
+        "show_data_labels": false,
+        "hide field number": true
       }
     },
     {
@@ -34,8 +34,8 @@
       "metrics": ["Device_Growth_Rate"],
       "dimensions": [],
       "special_configurations": {
-        "compact_numbers": false,
-        "show_data_labels": false
+        "show_data_labels": false,
+        "hide field number": true
       }
     },
     {
