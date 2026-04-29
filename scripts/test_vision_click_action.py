@@ -101,9 +101,9 @@ def launch_chrome_linux(user_data_dir: str):
         f"--user-data-dir={user_data_dir}",
         "--profile-directory=Default",
         "--window-size=1920,1080",
-        "--no-sandbox",
+        # "--no-sandbox",
         "--disable-dev-shm-usage",
-        "--headless=NEW"
+        # "--headless=NEW"
     ]
 
     subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -116,14 +116,14 @@ def launch_chrome_linux(user_data_dir: str):
 # SYSTEM PROMPTS (per model tier)
 # =============================================================================
 SYSTEM_PROMPT_FLASH = """
+You are operating Google Looker Studio in edit mode to build a dashboard — create charts, configure data fields, apply styles, and manage layout.
+
 Looker Studio operating rules:
 
 - Carefully read through the DOM tree before taking action — find the right element using a Region of Interest mindset. This reduces errors significantly.
 - Use muti-sequence actions when you know the exact button to click to finish the task.
 - Identify elements by aria-label, role, or visible text. Do not guess positions.
-- Do exactly the task instruct, follow the order of the task.
-- Do not click toolbar buttons except to add a text box.
-- Do not pretent you know all the button's position, read the DOM tree then interact with the website.
+- Strictly follow the task as instructed.
 - If an unintended popup or panel opened, press Escape or click the white canvas area to dismiss it.
 """
 
@@ -134,10 +134,13 @@ You are operating Google Looker Studio in edit mode to build a dashboard — cre
 - Action 'hover_and_click_revealed' is allowed only when specified in the task, otherwise use `click`.
 - No chain step can be taken after using 'hover_and_click_revealed'.
 - Shadow DOM elements with `[index]` markers are directly clickable with `click(index)`. Do NOT use `evaluate`.
+- Do not skip or jump back and forth between steps. Complete the task in numerical order.
+- Do not click 'aria-label=Add a chart' from the tool bar. This will cause the task crashed.
 </action_rules>
 
 <looker_studio_rules>
 DOM Navigation:
+- Before taking any action, walk through the DOM to see 
 - When adding a chart to an existing section, always use the section-level 'Add a chart' button or the 'Add Chart' placeholder — never use the toolbar 'Insert' menu (that is only for new sections or a text box).
 - Do not click or type anything in the Data panel (the panel listing all data fields).
 
@@ -329,7 +332,7 @@ async def main():
     llm_flash = ChatGoogle(
         model="gemini-3-flash-preview",
         project=project, location=location, vertexai=True,
-        temperature=0.5, thinking_level="minimal",
+        temperature=0.5, thinking_level="low",
     )
     llm_pro = ChatGoogle(
         model="gemini-3-flash-preview",
@@ -368,20 +371,18 @@ async def main():
                 cdp_url=CDP_URL,
                 disable_security=True,
                 wait_between_actions=0.5,
-                minimum_wait_page_load_time=0.5,
-                headless=True
+                minimum_wait_page_load_time=1.0,
             )
 
             phase_log_dir = os.path.join(conversation_log_dir, f"phase_{phase_idx + 1}_{phase['name'].replace(' ', '_')}")
             
             flash_agent = Agent(
                 task=task,
-                llm=llm_flash,
+                llm=llm_pro,
                 browser=browser,
                 controller=_controller,
                 llm_timeout=100,
                 use_vision=False,
-                max_history_items=10,
                 include_attributes=[                                                                                                   
                     "aria-label", "title", 
                     "role", "type",
@@ -390,8 +391,7 @@ async def main():
                     "aria-selected", "data-state", "alt",                                                                              
                 ],
                 extend_system_message=SYSTEM_PROMPT_FLASH,
-                flash_mode=False,
-                message_compaction=True,
+                flash_mode=True,
             )
 
             pro_agent = Agent(
@@ -411,7 +411,7 @@ async def main():
                 max_history_items=10,
                 flash_mode=False,
                 use_thinking=True,
-                message_compaction=True
+                message_compaction=True,
             )
 
             agent = flash_agent if model_tier == 'flash' else pro_agent

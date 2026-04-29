@@ -184,7 +184,7 @@
     "connect_bigquery": {
       "params": ["project_id", "dataset", "table"],
       "steps": [
-        "Add data to report > BigQuery > project '{project_id}' > dataset '{dataset}' > table '{table}' > Add > confirm."
+        "Add data to report > Click 'BigQuery' > project '{project_id}' > dataset '{dataset}' > table '{table}' > Click 'Add'"
       ]
     },
     "enable_responsive_layout": {
@@ -192,6 +192,11 @@
         "Enable Responsive Layout."
       ]
     },
+     "close_data_panel":{
+      "steps":[
+        "Click at the panel toggle 'Data' at the right of the webpage."
+      ]
+     },
 
     "add_first_chart_to_section": {
       "params": ["chart_type"],
@@ -232,7 +237,7 @@
     },
     "set_section_style_stretch": {
       "steps": [
-        "Find the visualization you just configured in the DOM tree (its [N] index). Call hover_and_click_revealed with the same index and button_aria_label='Open style menu', then select 'stretch'."
+        "Find the visualization you just configured in the DOM tree (its [N] index). Call hover_and_click_revealed with the same index and button_aria_label='Open style menu', wait for 2 seconds , and then click 'stretch' in that style menu."
       ]
     },
 

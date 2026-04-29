@@ -373,6 +373,7 @@ def compile_config_phased(config_path: str, playbook_path: str = None) -> dict:
     all_viz_labels = []
 
     total_rows = len(responsive_rows)
+    chart_steps.extend(expand_procedure("close_data_panel",playbook))
     for row_idx, row_viz_indices in enumerate(responsive_rows, start=1):
         if row_idx > 1:
             first_vi = row_viz_indices[0] if row_viz_indices else None
@@ -734,3 +735,16 @@ if __name__ == "__main__":
         print("=" * 60)
         print(result["task_string"])
         print("=" * 60)
+
+# ── Module-level constants for validate_config.py compatibility ───────────────
+try:
+    _DEFAULT_PLAYBOOK_PATH = os.path.join(os.path.dirname(__file__), "looker_studio_playbook.json")
+    with open(_DEFAULT_PLAYBOOK_PATH, "r", encoding="utf-8") as _f:
+        _DEFAULT_PLAYBOOK = json.load(_f)
+    VALID_CONFIGS_BY_CHART: dict = {
+        k: set(v) for k, v in _DEFAULT_PLAYBOOK.get("chart_style_constraints", {}).items()
+    }
+    CHART_DATA_LIMITS: dict = _DEFAULT_PLAYBOOK.get("chart_data_limits", {})
+except Exception:
+    VALID_CONFIGS_BY_CHART = {}
+    CHART_DATA_LIMITS = {}

@@ -241,13 +241,15 @@ def validate(config_path: str) -> tuple[list[str], list[str]] | list[str]:
 
     # ── 4b. Chart-type constraint warnings (non-blocking) ──────────────────
     from task_compiler import (
-        _canonical, VALID_CONFIGS_BY_CHART, CHART_DATA_LIMITS, _FILTERABLE_CONFIG_KEYS
+        _canonical, _load_constraints, load_playbook, _FILTERABLE_CONFIG_KEYS
     )
+    _playbook = load_playbook()
+    _, VALID_CONFIGS_BY_CHART, CHART_DATA_LIMITS = _load_constraints(_playbook)
     for idx, viz in enumerate(vizs):
         if not isinstance(viz, dict):
             continue
         ct_raw = viz.get("chart_type", "").strip()
-        canonical = _canonical(ct_raw)
+        canonical = _canonical(ct_raw, _playbook)
         pfx = f"visualizations[{idx}]"
 
         # Warn about invalid special_configurations
